@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -222,5 +223,6 @@ public class LoginActivity extends AppCompatActivity {
 
         // signup invite TextView
         signupInviteTV = findViewById(R.id.activity_login_tv_signup);
+
     }
 }
