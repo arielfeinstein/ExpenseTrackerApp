@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ExpenseTrackerApp</string>
+    <!-- menu strings -->
+    <string name="home">Home</string>
+    <string name="settings">Settings</string>
+    <string name="statistics">Statistics</string>
+    <string name="categories">Categories</string>
 </resources>
