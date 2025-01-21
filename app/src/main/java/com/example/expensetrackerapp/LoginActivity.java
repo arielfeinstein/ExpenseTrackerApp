@@ -1,6 +1,8 @@
 package com.example.expensetrackerapp;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -41,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
         // Initialize views
         initViews();
@@ -73,6 +75,42 @@ public class LoginActivity extends AppCompatActivity {
             loadRegistrationLayout();
         });
 
+        // Listener for EditText text change event
+        emailET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                emailET.setBackgroundResource(R.drawable.login_input_background);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        passwordET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                passwordET.setBackgroundResource(R.drawable.login_input_background);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
         // Handle back press
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -98,6 +136,10 @@ public class LoginActivity extends AppCompatActivity {
         loginBtn.setText(getString(R.string.signup));
         signupInviteTV.setVisibility(View.GONE);
         inRegisterMode = true;
+
+        // make sure that inputs background is the normal
+        emailET.setBackgroundResource(R.drawable.login_input_background);
+        passwordET.setBackgroundResource(R.drawable.login_input_background);
     }
 
     private void logInUser(String email, String password) {
@@ -118,6 +160,8 @@ public class LoginActivity extends AppCompatActivity {
                                 // Invalid credentials (email or password)
                                 Toast.makeText(LoginActivity.this, "Authentication failed. Incorrect email or password.",
                                         Toast.LENGTH_SHORT).show();
+                                emailET.setBackgroundResource(R.drawable.login_input_error_background);
+                                passwordET.setBackgroundResource(R.drawable.login_input_error_background);
                             } else if (e instanceof FirebaseNetworkException) {
                                 // Network error
                                 Toast.makeText(LoginActivity.this, "Authentication failed. Network error.",
@@ -151,10 +195,16 @@ public class LoginActivity extends AppCompatActivity {
                             if (e instanceof FirebaseAuthWeakPasswordException) {
                                 // weak password
                                 Toast.makeText(LoginActivity.this, "Authentication failed. Password should be at least 6 characters", Toast.LENGTH_SHORT).show();
+                                emailET.setBackgroundResource(R.drawable.login_input_background);
+                                passwordET.setBackgroundResource(R.drawable.login_input_error_background);
+                                confirmPasswordET.setBackgroundResource(R.drawable.login_input_error_background);
                             }
                             else if (e instanceof FirebaseAuthUserCollisionException) {
                                 // email already in use
                                 Toast.makeText(LoginActivity.this, "Authentication failed. Email already in use", Toast.LENGTH_SHORT).show();
+                                emailET.setBackgroundResource(R.drawable.login_input_error_background);
+                                passwordET.setBackgroundResource(R.drawable.login_input_background);
+                                confirmPasswordET.setBackgroundResource(R.drawable.login_input_background);
                             }
                             else if (e instanceof FirebaseNetworkException) {
                                 // network error
@@ -182,29 +232,40 @@ public class LoginActivity extends AppCompatActivity {
         String email = emailET.getText().toString();
         String password = passwordET.getText().toString();
 
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "One or more fields are empty", Toast.LENGTH_SHORT).show();
-            return null;
-        }
-
-        // Check if the email structure is valid
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(this, "Invalid email format", Toast.LENGTH_SHORT).show();
-            return null;
-        }
-
         if (inRegisterMode) {
             String confirmPassword = confirmPasswordET.getText().toString();
-            if (confirmPassword.isEmpty()) {
+            if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
                 Toast.makeText(this, "One or more fields are empty", Toast.LENGTH_SHORT).show();
+                emailET.setBackgroundResource(R.drawable.login_input_error_background);
+                passwordET.setBackgroundResource(R.drawable.login_input_error_background);
+                confirmPasswordET.setBackgroundResource(R.drawable.login_input_error_background);
                 return null;
             }
 
             if (!password.equals(confirmPassword)) {
                 Log.d("password_match", "password = " + password + " confirm password = " + confirmPassword);
                 Toast.makeText(this, "Passwords don't match", Toast.LENGTH_SHORT).show();
+                emailET.setBackgroundResource(R.drawable.login_input_background);
+                passwordET.setBackgroundResource(R.drawable.login_input_error_background);
+                confirmPasswordET.setBackgroundResource(R.drawable.login_input_error_background);
                 return null;
             }
+        } else {
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "One or more fields are empty", Toast.LENGTH_SHORT).show();
+                emailET.setBackgroundResource(R.drawable.login_input_error_background);
+                passwordET.setBackgroundResource(R.drawable.login_input_error_background);
+                return null;
+            }
+        }
+
+        // Check if the email structure is valid
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, "Invalid email format", Toast.LENGTH_SHORT).show();
+            emailET.setBackgroundResource(R.drawable.login_input_error_background);
+            passwordET.setBackgroundResource(R.drawable.login_input_background);
+            confirmPasswordET.setBackgroundResource(R.drawable.login_input_background);
+            return null;
         }
 
         return new String[] {email, password};
@@ -214,15 +275,15 @@ public class LoginActivity extends AppCompatActivity {
     // assigns views from activity_login.xml
     private void initViews() {
         // EditTexts
-        emailET= findViewById(R.id.activity_login_et_email);
-        passwordET = findViewById(R.id.activity_login_et_password);
-        confirmPasswordET = findViewById(R.id.activity_login_et_confirm_password);
+        emailET= findViewById(R.id.inputEmail);
+        passwordET = findViewById(R.id.inputPassword);
+        confirmPasswordET = findViewById(R.id.inputConfirmPassword);
 
         // Login Button
-        loginBtn = findViewById(R.id.activity_login_btn_login);
+        loginBtn = findViewById(R.id.btnLogin);
 
         // signup invite TextView
-        signupInviteTV = findViewById(R.id.activity_login_tv_signup);
+        signupInviteTV = findViewById(R.id.txtSignUp);
 
     }
 }

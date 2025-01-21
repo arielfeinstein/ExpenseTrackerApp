@@ -4,84 +4,83 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="30dp"
+    android:background="@drawable/get_started_background">
 
-    <!-- Profile Icon -->
     <ImageView
-        android:id="@+id/activity_login_profile_icon"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:id="@+id/userIcon"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:src="@drawable/account_circle"
-        android:contentDescription="@string/profile_icon"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="40dp"
-        android:scaleType="centerCrop" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/inputSection"/>
 
-    <!-- Email and Password in LinearLayout -->
     <LinearLayout
-        android:id="@+id/activity_login_edit_texts_linear_layout"
-        android:layout_width="0dp"
+        android:id="@+id/inputSection"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/activity_login_profile_icon"
+        android:background="@drawable/login_input_section_background"
+        android:padding="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp">
+        app:layout_constraintTop_toBottomOf="@id/userIcon"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- Email EditText -->
         <EditText
-            android:id="@+id/activity_login_et_email"
+            android:id="@+id/inputEmail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:hint="@string/email"
-            android:inputType="textEmailAddress"
-            android:padding="12dp" />
+            android:background="@drawable/login_input_background"
+            android:padding="10dp"
+            android:textAlignment="center"/>
 
-        <!-- Password EditText -->
         <EditText
-            android:id="@+id/activity_login_et_password"
+            android:id="@+id/inputPassword"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:inputType="textPassword"
             android:hint="@string/password"
-            android:inputType="textPassword"
-            android:layout_marginTop="16dp"
-            android:padding="12dp" />
+            android:background="@drawable/login_input_background"
+            android:padding="10dp"
+            android:layout_marginTop="20dp"
+            android:textAlignment="center"/>
 
-        <!-- Confirm Password EditText -->
         <EditText
-            android:id="@+id/activity_login_et_confirm_password"
+            android:id="@+id/inputConfirmPassword"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/confirm_password"
+            android:layout_height="50dp"
             android:inputType="textPassword"
-            android:layout_marginTop="16dp"
-            android:padding="12dp"
+            android:hint="@string/confirm_password"
+            android:background="@drawable/login_input_background"
+            android:padding="10dp"
+            android:layout_marginTop="20dp"
+            android:textAlignment="center"
             android:visibility="gone"/>
 
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/primaryColorDark"
+            android:text="@string/login"
+            android:textSize="18sp"
+            android:layout_gravity="center_horizontal"
+            android:paddingHorizontal="30dp"
+            android:layout_marginTop="40dp"/>
+
+        <TextView
+            android:id="@+id/txtSignUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_invite"
+            android:textColor="@color/black"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"/>
+
     </LinearLayout>
-
-    <!-- Login Button -->
-    <Button
-        android:id="@+id/activity_login_btn_login"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/login"
-        app:layout_constraintTop_toBottomOf="@+id/activity_login_edit_texts_linear_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp" />
-
-    <!-- "Don't have an account?" TextView -->
-    <TextView
-        android:id="@+id/activity_login_tv_signup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/sign_up_invite"
-        app:layout_constraintTop_toBottomOf="@id/activity_login_btn_login"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
