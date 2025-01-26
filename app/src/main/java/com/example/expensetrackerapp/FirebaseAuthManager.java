@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 
 public class FirebaseAuthManager {
-    private static FirebaseAuth auth;
+    private final static FirebaseAuth auth = FirebaseAuth.getInstance();
 
     public static void signIn(String email, String password, FirebaseAuthCallback callback) {
         auth.signInWithEmailAndPassword(email, password)
@@ -14,6 +14,7 @@ public class FirebaseAuthManager {
                         FirebaseUser user = auth.getCurrentUser();
                         if (user != null) {
                             // sign in successfully
+                            callback.onSuccess();
                         } else {
                             callback.onFailure("Failed to sign in");
                         }
@@ -30,6 +31,7 @@ public class FirebaseAuthManager {
                         FirebaseUser user = auth.getCurrentUser();
                         if (user != null) {
                             // sign up successfully
+                            callback.onSuccess();
                         } else {
                             callback.onFailure("Failed to sign up");
                         }

@@ -2,6 +2,7 @@ package com.example.expensetrackerapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,5 +20,9 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, GetStartedActivity.class);
             startActivity(intent);
         }
+
+        // set the test sign out button on click event
+        Button btnSignOut = findViewById(R.id.btnSignOut);
+        btnSignOut.setOnClickListener(v -> FirebaseAuthManager.signOut());
     }
 }
