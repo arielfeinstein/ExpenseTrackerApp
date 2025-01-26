@@ -38,8 +38,6 @@ public class LoginActivity extends AppCompatActivity {
     private TextView signupInviteTV;
     private boolean inRegisterMode;
 
-    private FirebaseAuth mAuth;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,9 +49,6 @@ public class LoginActivity extends AppCompatActivity {
         // Set register mode to false
         inRegisterMode = false;
 
-        // Get instance of firebase authentication
-        mAuth = FirebaseAuth.getInstance();
-
         // Listener for login button
         loginBtn.setOnClickListener(v -> {
             String[] userInput = getUserInput();
@@ -62,10 +57,10 @@ public class LoginActivity extends AppCompatActivity {
             if (userInput != null) {
                 if (inRegisterMode) {
                     // attempt to register
-                    registerUser(userInput[0], userInput[1]);
+                    signUp(userInput[0], userInput[1]);
                 } else {
                     // attempt to login
-                    logInUser(userInput[0], userInput[1]);
+                    signIn(userInput[0], userInput[1]);
                 }
             }
         });
@@ -124,6 +119,34 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private void signIn(String email, String password) {
+        FirebaseAuthManager.signIn(email, password, new FirebaseAuthManager.FirebaseAuthCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(getApplicationContext(), "Welcome " + email + "!", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(String errorMsg) {
+                Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void signUp(String email, String password) {
+        FirebaseAuthManager.signUp(email, password, new FirebaseAuthManager.FirebaseAuthCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(getApplicationContext(), "Welcome " + email + "!", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(String errorMsg) {
+                Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     private void resetToLoginMode() {
         confirmPasswordET.setVisibility(View.GONE);
         loginBtn.setText(getString(R.string.login));
@@ -140,86 +163,6 @@ public class LoginActivity extends AppCompatActivity {
         // make sure that inputs background is the normal
         emailET.setBackgroundResource(R.drawable.login_input_background);
         passwordET.setBackgroundResource(R.drawable.login_input_background);
-    }
-
-    private void logInUser(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(FIREBASE_AUTHENTICATION_LOG_TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
-                        } else {
-                            // If sign in fails, handle specific exceptions
-                            Exception e = task.getException();
-
-                            if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                                // Invalid credentials (email or password)
-                                Toast.makeText(LoginActivity.this, "Authentication failed. Incorrect email or password.",
-                                        Toast.LENGTH_SHORT).show();
-                                emailET.setBackgroundResource(R.drawable.login_input_error_background);
-                                passwordET.setBackgroundResource(R.drawable.login_input_error_background);
-                            } else if (e instanceof FirebaseNetworkException) {
-                                // Network error
-                                Toast.makeText(LoginActivity.this, "Authentication failed. Network error.",
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                // Other errors
-                                Log.w(FIREBASE_AUTHENTICATION_LOG_TAG, "signInWithEmail:failure", task.getException());
-                                Toast.makeText(LoginActivity.this, "Authentication failed. Try again later.",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                            //updateUI(null);
-                        }
-                    }
-                });
-    }
-
-
-    private void registerUser(String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(FIREBASE_AUTHENTICATION_LOG_TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Exception e = task.getException();
-                            if (e instanceof FirebaseAuthWeakPasswordException) {
-                                // weak password
-                                Toast.makeText(LoginActivity.this, "Authentication failed. Password should be at least 6 characters", Toast.LENGTH_SHORT).show();
-                                emailET.setBackgroundResource(R.drawable.login_input_background);
-                                passwordET.setBackgroundResource(R.drawable.login_input_error_background);
-                                confirmPasswordET.setBackgroundResource(R.drawable.login_input_error_background);
-                            }
-                            else if (e instanceof FirebaseAuthUserCollisionException) {
-                                // email already in use
-                                Toast.makeText(LoginActivity.this, "Authentication failed. Email already in use", Toast.LENGTH_SHORT).show();
-                                emailET.setBackgroundResource(R.drawable.login_input_error_background);
-                                passwordET.setBackgroundResource(R.drawable.login_input_background);
-                                confirmPasswordET.setBackgroundResource(R.drawable.login_input_background);
-                            }
-                            else if (e instanceof FirebaseNetworkException) {
-                                // network error
-                                Toast.makeText(LoginActivity.this, "Authentication failed. Network error", Toast.LENGTH_SHORT).show();
-                            }
-                            else {
-                                // other errors when registering
-                                Log.w(FIREBASE_AUTHENTICATION_LOG_TAG, "createUserWithEmail:failure", task.getException());
-                                Toast.makeText(LoginActivity.this, "Authentication failed. Try again later",
-                                        Toast.LENGTH_SHORT).show();
-                                //updateUI(null);
-                            }
-                        }
-                    }
-                });
     }
 
     /*
@@ -284,6 +227,5 @@ public class LoginActivity extends AppCompatActivity {
 
         // signup invite TextView
         signupInviteTV = findViewById(R.id.txtSignUp);
-
     }
 }
