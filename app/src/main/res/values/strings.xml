@@ -7,4 +7,7 @@
     <string name="sign_up_invite">Don\'t have an account? Sign Up</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="signup">Signup</string>
+    <string name="app_welcome_paragraph">Welcome to Expense Tracker!\n\nTake control of your money effortlessly with our smart expense management tool.\n\nTrack your spending, set budgets and make informed financial decisions - All in one place!
+    </string>
+    <string name="get_started">Get Started</string>
 </resources>
