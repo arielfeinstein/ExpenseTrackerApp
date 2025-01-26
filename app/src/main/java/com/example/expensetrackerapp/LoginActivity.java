@@ -1,5 +1,6 @@
 package com.example.expensetrackerapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,29 +11,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseNetworkException;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
-import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static final String FIREBASE_AUTHENTICATION_LOG_TAG = "Firebase Authentication";
     private EditText emailET, passwordET, confirmPasswordET;
     private Button loginBtn;
     private TextView signupInviteTV;
@@ -120,10 +103,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signIn(String email, String password) {
+        Intent intent = new Intent(this, MainActivity.class);
         FirebaseAuthManager.signIn(email, password, new FirebaseAuthManager.FirebaseAuthCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "Welcome " + email + "!", Toast.LENGTH_LONG).show();
+                //startActivity(intent);
             }
 
             @Override
@@ -134,10 +119,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signUp(String email, String password) {
+        Intent intent = new Intent(this, MainActivity.class);
         FirebaseAuthManager.signUp(email, password, new FirebaseAuthManager.FirebaseAuthCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "Welcome " + email + "!", Toast.LENGTH_LONG).show();
+                //startActivity(intent);
             }
 
             @Override

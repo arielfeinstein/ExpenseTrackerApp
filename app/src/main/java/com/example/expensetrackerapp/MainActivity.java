@@ -1,5 +1,6 @@
 package com.example.expensetrackerapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +12,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        // check if any user is authenticated
+        String userID = FirebaseAuthManager.isLoggedIn();
+        if (userID == null) {
+            // no user authenticated - start GetStartedActivity
+            Intent intent = new Intent(this, GetStartedActivity.class);
+            startActivity(intent);
+        }
     }
 }
