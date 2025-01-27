@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "Welcome " + email + "!", Toast.LENGTH_LONG).show();
-                //startActivity(intent);
+                startActivity(intent);
             }
 
             @Override
@@ -124,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 Toast.makeText(getApplicationContext(), "Welcome " + email + "!", Toast.LENGTH_LONG).show();
-                //startActivity(intent);
+                startActivity(intent);
             }
 
             @Override

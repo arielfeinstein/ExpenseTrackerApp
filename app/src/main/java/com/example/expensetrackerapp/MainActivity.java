@@ -23,6 +23,10 @@ public class MainActivity extends AppCompatActivity {
 
         // set the test sign out button on click event
         Button btnSignOut = findViewById(R.id.btnSignOut);
-        btnSignOut.setOnClickListener(v -> FirebaseAuthManager.signOut());
+        btnSignOut.setOnClickListener(v -> {
+            FirebaseAuthManager.signOut();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        });
     }
 }
