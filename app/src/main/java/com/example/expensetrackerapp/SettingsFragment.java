@@ -1,10 +1,15 @@
 package com.example.expensetrackerapp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -59,5 +64,21 @@ public class SettingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_settings, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Handle signOut
+        Button signOutBtn = view.findViewById(R.id.btn_sign_out);
+        signOutBtn.setOnClickListener(v -> {
+            FirebaseAuthManager.signOut();
+            Context context = getContext();
+            if (context != null) {
+                Intent intent = new Intent(context, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }
