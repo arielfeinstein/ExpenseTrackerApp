@@ -123,6 +123,7 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseAuthManager.signUp(email, password, new FirebaseAuthManager.FirebaseAuthCallback() {
             @Override
             public void onSuccess() {
+                FirestoreManager.addDefaultCategories(email);
                 Toast.makeText(getApplicationContext(), "Welcome " + email + "!", Toast.LENGTH_LONG).show();
                 startActivity(intent);
             }

@@ -749,6 +749,25 @@ public final class FirestoreManager {
                 });
     }
 
+    /**
+     * add default categories - won't be added if already exist
+     * @param userEmail the user to which to add the categories
+     */
+    public static void addDefaultCategories(String userEmail) {
+        Category utilities = new Category("Utilities", R.drawable.utilities_category);
+        Category transportation = new Category("Transportation", R.drawable.transportation_category);
+        Category food = new Category("Food", R.drawable.food_category);
+        Category insurance = new Category("Insurance", R.drawable.insurance_category);
+        Category communications = new Category("Communications", R.drawable.communications_category);
+
+        addCategory(userEmail,utilities,null);
+        addCategory(userEmail,transportation,null);
+        addCategory(userEmail,food,null);
+        addCategory(userEmail,insurance,null);
+        addCategory(userEmail,communications,null);
+
+    }
+
     //TODO: inspect
     public static ListenerRegistration attachCategoriesListener(String userEmail, FirestoreSnapshotCallback callback) {
         return db.collection(USERS_COLLECTION)
