@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:orientation="vertical"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+    android:layout_gravity="center">
+
+    <include layout="@layout/weekly_monthly_daily_buttons"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginVertical="8dp"
+        android:layout_gravity="center" />
+
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:rowCount="4"
+        android:columnCount="4"
+        android:padding="16dp"
+        android:layout_gravity="center">
+
+        <!-- Example cells -->
+        <!-- from date text -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="from date"
+            android:paddingHorizontal="10dp"
+            android:textSize="20sp"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:gravity="center"/>
+
+        <!-- from date picker -->
+        <EditText
+            android:id="@+id/et_from_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:hint="01/01/2025"
+            android:focusable="false"
+            android:clickable="true"
+            android:inputType="none"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:gravity="center"
+            android:textSize="20sp"/>
+
+        <!-- to date text -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:text="to date"
+            android:textSize="20sp"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:layout_gravity="center"/>
+
+        <!-- from date picker -->
+        <EditText
+            android:id="@+id/et_to_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:hint="01/01/2025"
+            android:focusable="false"
+            android:clickable="true"
+            android:inputType="none"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:textSize="20sp"/>
+    </GridLayout>
+
+    <!-- ok button -->
+    <android.widget.Button
+        android:id="@+id/popup_date_ok_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OK"
+        android:textSize="20sp"
+        android:layout_gravity="center"
+        android:layout_marginVertical="8dp"
+        android:background="@drawable/light_gray_grounded_background" />
+
+</LinearLayout>

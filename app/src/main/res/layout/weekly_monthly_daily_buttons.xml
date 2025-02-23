@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:background="@drawable/weekly_monthly_yearly_background"
+    android:orientation="horizontal"
+    android:layout_gravity="center">
+
+    <android.widget.Button
+        android:id="@+id/btn_weekly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Weekly"
+        android:background="@drawable/button_unselected"
+        android:textColor="@color/black"
+        android:layout_marginHorizontal="4dp"/>
+
+    <android.widget.Button
+        android:id="@+id/btn_monthly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Monthly"
+        android:background="@drawable/button_unselected"
+        android:textColor="@color/black"
+        android:layout_marginHorizontal="4dp"/>
+
+    <android.widget.Button
+        android:id="@+id/btn_yearly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Yearly"
+        android:background="@drawable/button_unselected"
+        android:textColor="@color/black"
+        android:layout_marginHorizontal="4dp"/>
+
+</LinearLayout>
