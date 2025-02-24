@@ -136,7 +136,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fragment_home_floating_add_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"

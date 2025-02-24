@@ -60,9 +60,12 @@ public class FirebaseAuthManager {
 
     public static String getUserEmail() {
         FirebaseUser user = auth.getCurrentUser();
-        if (user != null)
+        if (user != null) {
             return user.getEmail();
-        return "";
+        }
+        else {
+            return null;
+        }
     }
 
     public interface FirebaseAuthCallback {

@@ -51,11 +51,11 @@ public final class FirestoreManager {
      * Updates the expense object and the Firestore document with the generated document ID.
      *
      * @param userEmail the email of the user to whom the expense belongs
-     * @param categoryId the ID of the category document inside Firestore
      * @param expense the expense object to be added
      * @param callback the callback to handle success or failure of the operation
      */
-    public static void addExpense(String userEmail, String categoryId, Expense expense, FirestoreIdCallback callback) {
+    public static void addExpense(String userEmail, Expense expense, FirestoreIdCallback callback) {
+        String categoryId = expense.getCategory().getId();
         Log.d("FirestoreManager", "Adding expense for user: " + userEmail + " in category: " + categoryId);
 
         // Create a map to hold the expense data to be stored in Firestore
