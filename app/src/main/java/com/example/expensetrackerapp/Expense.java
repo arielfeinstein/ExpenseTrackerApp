@@ -2,7 +2,7 @@ package com.example.expensetrackerapp;
 
 import java.util.Date;
 
-public class Expense {
+public class Expense implements Comparable<Expense> {
     private String id;
     private double amount;
     private Category category;
@@ -44,6 +44,11 @@ public class Expense {
                 ", transactionDate=" + transactionDate +
                 ", description='" + description + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Expense expense) {
+        return this.transactionDate.compareTo(expense.transactionDate);
     }
 }
 

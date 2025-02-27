@@ -5,6 +5,7 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/popup_add_expense_title_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="New Expense"
@@ -78,15 +79,34 @@
         android:background="@drawable/add_expense_input_background"
         android:inputType="numberDecimal" />
 
-    <Button
-        android:id="@+id/popup_add_expense_btn"
+    <LinearLayout
+        android:layout_marginTop="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Expense"
-        android:layout_marginTop="50dp"
-        android:layout_marginHorizontal="130dp"
-        android:backgroundTint="@color/primaryColor"
-        android:textColor="@color/black" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/popup_add_expense_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="4dp"
+            android:text="Add Expense"
+            android:backgroundTint="@color/primaryColor"
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/popup_add_expense_remove_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="4dp"
+            android:backgroundTint="@color/red"
+            android:text="Remove Expense"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
 
 
 

@@ -329,6 +329,7 @@ public final class FirestoreManager {
     /**
      * Fetches a list of expenses for a specific user, filtered by a list of category IDs and a date range.
      * Ensures the returned list is ordered by transaction date in descending order.
+     * The returned expenses contain the ids of firestore.
      *
      * @param userEmail the email of the user to whom the expenses belong
      * @param categoryIds a list of category IDs to filter the expenses
