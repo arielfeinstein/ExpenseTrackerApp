@@ -1,11 +1,20 @@
 package com.example.expensetrackerapp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,5 +68,22 @@ public class StatisticsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_statistics, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ViewPager2 viewPager = view.findViewById(R.id.chartsPager);
+        TabLayout tabLayout = view.findViewById(R.id.chartsTabs);
+        ChartsPagerAdapter adapter = new ChartsPagerAdapter(getActivity());
+        viewPager.setAdapter(adapter);
+
+        // connect ViewPager2 with TabLayout
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+            // Inflate custom dot layout for each tab
+            ViewGroup parent = view.findViewById(R.id.statisticsFrame);
+            View tabView = LayoutInflater.from(getContext()).inflate(R.layout.dot_tab, parent, false);
+            tab.setCustomView(tabView);
+        }).attach();
     }
 }
