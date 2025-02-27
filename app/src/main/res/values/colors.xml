@@ -7,5 +7,6 @@
     <color name="primaryColor">#0a96d1</color>
     <color name="secondaryColor">#e9feff</color>
     <color name="primaryColorDark">#084c5d</color>
+    <color name="primaryColorLight">#a4def7</color>
     <color name="specialColor">#35a86d</color>
 </resources>

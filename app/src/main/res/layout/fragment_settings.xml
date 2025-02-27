@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal"
+    android:paddingHorizontal="50dp"
+    android:paddingVertical="20dp"
     tools:context=".SettingsFragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -11,6 +15,16 @@
         android:id="@+id/btn_sign_out"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign out" />
+        android:layout_marginEnd="20dp"
+        android:backgroundTint="#ff4747"
+        android:text="@string/sign_out" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/btnApply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/specialColor"
+        android:textSize="16sp"
+        android:text="@string/apply"/>
+
+</LinearLayout>

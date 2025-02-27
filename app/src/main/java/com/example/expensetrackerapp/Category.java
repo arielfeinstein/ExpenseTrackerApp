@@ -25,7 +25,6 @@ public class Category {
     public void setImageResourceId(int imageResourceId) { this.imageResourceId = imageResourceId; }
 
     // toString
-
     @Override
     public String toString() {
         return "Category{" +
