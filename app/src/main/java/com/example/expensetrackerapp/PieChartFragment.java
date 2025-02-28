@@ -22,7 +22,8 @@ import java.util.Map;
 import java.util.Random;
 
 public class PieChartFragment extends Fragment {
-    private final List<Expense> expenses;
+    private List<Expense> expenses;
+    private PieChart pieChart;
 
     public PieChartFragment(List<Expense> expenses) {
         this.expenses = expenses;
@@ -32,15 +33,18 @@ public class PieChartFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_pie_chart, container, false);
+        View view = inflater.inflate(R.layout.fragment_pie_chart, container, false);
+        pieChart = view.findViewById(R.id.pieChart);
+        updateChart();
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
 
-        PieChart pieChart = view.findViewById(R.id.pieChart);
-
+    private PieData generatePieData(List<Expense> expenses) {
         // group expenses by category
         Map<Category, List<Expense>> groupedExpenses = new HashMap<>();
         for (Expense expense : expenses) {
@@ -72,10 +76,7 @@ public class PieChartFragment extends Fragment {
         pieChart.setTransparentCircleRadius(2f);
         pieChart.setEntryLabelColor(Color.BLACK);
 
-        PieData pieData = new PieData(dataSet);
-        pieChart.setData(pieData);
-
-        pieChart.invalidate();
+        return new PieData(dataSet);
     }
 
     private List<Integer> generateColors(int count) {
@@ -86,5 +87,18 @@ public class PieChartFragment extends Fragment {
             colors.add(color);
         }
         return colors;
+    }
+
+    public void updateData(List<Expense> expenses) {
+        this.expenses = expenses;
+        updateChart();
+    }
+
+    private void updateChart() {
+        if (pieChart != null) {
+            PieData data = generatePieData(expenses);
+            pieChart.setData(data);
+            pieChart.invalidate();
+        }
     }
 }

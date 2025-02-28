@@ -18,24 +18,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BarChartFragment extends Fragment {
-    private final List<Expense> expenses;
+    private List<Expense> expenses;
+    private BarChart barChart;
 
     public BarChartFragment(List<Expense> expenses) {
         this.expenses = expenses;
+        updateChart();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_bar_chart, container, false);
+        View view = inflater.inflate(R.layout.fragment_bar_chart, container, false);
+        barChart = view.findViewById(R.id.barChart);
+        updateChart();
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    private BarData generateBarData(List<Expense> expenses) {
         // TODO: get data to show from the constructor and display it in the BarChart view
-        BarChart barChart = view.findViewById(R.id.barChart);
 
         ArrayList<BarEntry> entries = new ArrayList<>();
         entries.add(new BarEntry(0f, 4f));  // Bar at position 0 with a value of 4
@@ -48,19 +55,26 @@ public class BarChartFragment extends Fragment {
         barDataSet.setColor(Color.BLUE);  // Set the color of the bars
 
         // Create BarData from the BarDataSet
-        BarData barData = new BarData(barDataSet);
+        return new BarData(barDataSet);
+    }
 
-        // Set the BarChart data
-        barChart.setData(barData);
+    public void updateData(List<Expense> expenses) {
+        this.expenses = expenses;
+        updateChart();
+    }
 
-        // Additional customization (optional)
-        // Disable the grid lines on the X-Axis and Y-Axis
-        barChart.getXAxis().setDrawGridLines(false);  // X-Axis grid
-        barChart.getAxisLeft().setDrawGridLines(false);  // Y-Axis grid (left side)
-        barChart.getAxisRight().setDrawGridLines(false);  // Y-Axis grid (right side)
-        barChart.getDescription().setEnabled(false);  // Hide description
-        // Disable touch interaction (no selection or dragging)
-        barChart.setTouchEnabled(false);
-        barChart.invalidate();  // Refresh the chart
+    private void updateChart() {
+        if (barChart != null) {
+            BarData data = generateBarData(expenses);
+            barChart.setData(data);
+            // Disable the grid lines on the X-Axis and Y-Axis
+            barChart.getXAxis().setDrawGridLines(false);  // X-Axis grid
+            barChart.getAxisLeft().setDrawGridLines(false);  // Y-Axis grid (left side)
+            barChart.getAxisRight().setDrawGridLines(false);  // Y-Axis grid (right side)
+            barChart.getDescription().setEnabled(false);  // Hide description
+            // Disable touch interaction (no selection or dragging)
+            barChart.setTouchEnabled(false);
+            barChart.invalidate();
+        }
     }
 }

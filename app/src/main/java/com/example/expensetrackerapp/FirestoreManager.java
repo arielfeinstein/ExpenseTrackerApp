@@ -366,7 +366,6 @@ public final class FirestoreManager {
                             for (int i = 0; i < expenseDocuments.size(); i++) {
                                 DocumentSnapshot expenseDoc = expenseDocuments.get(i);
                                 Category category = categories.get(i);
-                                Log.d("Test", "Category: " + category);
 
                                 Map<String, Object> data = expenseDoc.getData();
                                 if (data == null) {

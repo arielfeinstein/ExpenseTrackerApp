@@ -1,6 +1,7 @@
 package com.example.expensetrackerapp;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -12,19 +13,20 @@ import java.util.List;
 
 public class ChartsPagerAdapter extends FragmentStateAdapter {
     private final List<Expense> expenses;
+    private final PieChartFragment pieChartFragment;
+    private final BarChartFragment barChartFragment;
 
     public ChartsPagerAdapter(@NonNull FragmentActivity fragmentActivity, List<Expense> expenses) {
         super(fragmentActivity);
         this.expenses = expenses;
+        pieChartFragment = new PieChartFragment(expenses);
+        barChartFragment = new BarChartFragment(expenses);
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        if (position == 1) {
-            return new BarChartFragment(expenses);
-        }
-        return new PieChartFragment(expenses);
+        return (position == 1) ? barChartFragment : pieChartFragment;
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -32,6 +34,10 @@ public class ChartsPagerAdapter extends FragmentStateAdapter {
         this.expenses.clear();
         this.expenses.addAll(expenses);
         notifyDataSetChanged();
+
+        // notify charts about the changes
+        pieChartFragment.updateData(expenses);
+        barChartFragment.updateData(expenses);
     }
 
     @Override
