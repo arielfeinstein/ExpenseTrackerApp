@@ -15,12 +15,14 @@ public class ChartsPagerAdapter extends FragmentStateAdapter {
     private final List<Expense> expenses;
     private final PieChartFragment pieChartFragment;
     private final BarChartFragment barChartFragment;
+    private TimePeriod timePeriod;
 
-    public ChartsPagerAdapter(@NonNull FragmentActivity fragmentActivity, List<Expense> expenses) {
+    public ChartsPagerAdapter(@NonNull FragmentActivity fragmentActivity, List<Expense> expenses, TimePeriod timePeriod) {
         super(fragmentActivity);
         this.expenses = expenses;
+        this.timePeriod = timePeriod;
         pieChartFragment = new PieChartFragment(expenses);
-        barChartFragment = new BarChartFragment(expenses);
+        barChartFragment = new BarChartFragment(expenses, timePeriod);
     }
 
     @NonNull
@@ -30,14 +32,15 @@ public class ChartsPagerAdapter extends FragmentStateAdapter {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void updateData(List<Expense> expenses) {
+    public void updateData(List<Expense> expenses, TimePeriod timePeriod) {
         this.expenses.clear();
         this.expenses.addAll(expenses);
+        this.timePeriod = timePeriod;
         notifyDataSetChanged();
 
         // notify charts about the changes
         pieChartFragment.updateData(expenses);
-        barChartFragment.updateData(expenses);
+        barChartFragment.updateData(expenses, timePeriod);
     }
 
     @Override

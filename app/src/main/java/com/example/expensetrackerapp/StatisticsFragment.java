@@ -1,7 +1,5 @@
 package com.example.expensetrackerapp;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,23 +8,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
-
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 public class StatisticsFragment extends Fragment {
-    private enum TimePeriod {WEEKLY, MONTHLY, YEARLY}
     private ChartsPagerAdapter adapter;
     private LinearLayout chartsSection;
     private ProgressBar progressBar;
@@ -84,7 +76,7 @@ public class StatisticsFragment extends Fragment {
         fetchExpenses(TimePeriod.WEEKLY, new FirestoreManager.FirestoreListCallback<Expense>() {
             @Override
             public void onComplete(List<Expense> items) {
-                adapter = new ChartsPagerAdapter(getActivity(), items);
+                adapter = new ChartsPagerAdapter(getActivity(), items, TimePeriod.WEEKLY);
                 viewPager.setAdapter(adapter);
 
                 // connect ViewPager2 with TabLayout
@@ -128,7 +120,7 @@ public class StatisticsFragment extends Fragment {
         fetchExpenses(timePeriod, new FirestoreManager.FirestoreListCallback<Expense>() {
             @Override
             public void onComplete(List<Expense> items) {
-                adapter.updateData(items);
+                adapter.updateData(items, timePeriod);
                 // shows the pager and hide the progress bar
                 chartsSection.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
