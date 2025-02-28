@@ -1,6 +1,7 @@
 package com.example.expensetrackerapp;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -365,6 +366,7 @@ public final class FirestoreManager {
                             for (int i = 0; i < expenseDocuments.size(); i++) {
                                 DocumentSnapshot expenseDoc = expenseDocuments.get(i);
                                 Category category = categories.get(i);
+                                Log.d("Test", "Category: " + category);
 
                                 Map<String, Object> data = expenseDoc.getData();
                                 if (data == null) {
@@ -716,11 +718,12 @@ public final class FirestoreManager {
             Task<Category> categoryTask = db.collection(USERS_COLLECTION)
                     .document(userEmail)
                     .collection(CATEGORIES_SUBCOLLECTION)
-                    .document(document.getId()) // Assuming document ID corresponds to category ID
+                    .document(document.getString("categoryId")) // Assuming document ID corresponds to category ID
                     .get()
                     .continueWith(task -> {
                         Log.d("getCategories", "Fetching category for document: " + document.getId());
                         if (!task.isSuccessful() || task.getResult() == null || !task.getResult().exists()) {
+                            Log.e("Error", "Null Category!");
                             throw new CategoryNotFoundException("Category not found for document: " + document.getId());
                         }
 

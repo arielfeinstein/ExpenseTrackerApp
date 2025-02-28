@@ -8,8 +8,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".StatisticsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -20,33 +18,48 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/chartsPager"
+            app:layout_constraintBottom_toTopOf="@+id/chartsSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"/>
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/chartsPager"
+        <ProgressBar
+            android:id="@+id/chartsProgressBar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/primaryColor"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dateFilterSection"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/chartsSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dateFilterSection"/>
+            app:layout_constraintTop_toBottomOf="@+id/dateFilterSection">
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/chartsTabs"
-            android:layout_width="70dp"
-            android:layout_height="30dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chartsPager"
-            android:layout_marginTop="20dp"
-            app:tabIndicatorHeight="0dp"
-            android:background="@drawable/dot_tabs_background"
-            app:tabGravity="center"
-            app:tabMode="fixed"/>
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/chartsPager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/chartsTabs"
+                android:layout_width="70dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                app:tabIndicatorHeight="0dp"
+                android:background="@drawable/dot_tabs_background"
+                app:tabGravity="center"
+                app:tabMode="fixed"/>
+
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </FrameLayout>

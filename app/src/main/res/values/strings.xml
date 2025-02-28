@@ -18,4 +18,8 @@
     <string name="categories">Categories</string>
     <!-- settings strings -->
     <string name="apply">Apply</string>
+    <!-- statistics strings -->
+    <string name="weekly">Weekly</string>
+    <string name="monthly">Monthly</string>
+    <string name="yearly">Yearly</string>
 </resources>

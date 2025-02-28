@@ -15,11 +15,12 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BarChartFragment extends Fragment {
-    private final ArrayList<Expense> expenses;
+    private final List<Expense> expenses;
 
-    public BarChartFragment(ArrayList<Expense> expenses) {
+    public BarChartFragment(List<Expense> expenses) {
         this.expenses = expenses;
     }
 

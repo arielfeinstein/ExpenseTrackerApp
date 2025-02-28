@@ -22,9 +22,9 @@ import java.util.Map;
 import java.util.Random;
 
 public class PieChartFragment extends Fragment {
-    private final ArrayList<Expense> expenses;
+    private final List<Expense> expenses;
 
-    public PieChartFragment(ArrayList<Expense> expenses) {
+    public PieChartFragment(List<Expense> expenses) {
         this.expenses = expenses;
     }
 
