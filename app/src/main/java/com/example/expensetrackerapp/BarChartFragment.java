@@ -53,8 +53,6 @@ public class BarChartFragment extends Fragment {
     }
 
     private BarData generateBarData(List<Expense> expenses) {
-        // TODO: get data to show from the constructor and display it in the BarChart view
-
         Map<String, Double> groupedExpenses = new LinkedHashMap<>();
         List<String> allKeys = new ArrayList<>();
         SimpleDateFormat formatter;
@@ -62,56 +60,73 @@ public class BarChartFragment extends Fragment {
 
         switch (timePeriod) {
             case WEEKLY:
+                // Use day of the week (Sun, Mon, Tue, Wed, Thu, Fri, Sat)
                 allKeys = Arrays.asList("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
-                formatter = new SimpleDateFormat("EEE", Locale.getDefault());
+                formatter = new SimpleDateFormat("EEE", Locale.ENGLISH);
                 break;
             case MONTHLY:
+                // Use day of the month (1, 2, 3, ...)
                 int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
                 for (int i = 1; i <= daysInMonth; i++) {
-                    allKeys.add(String.format(Locale.getDefault(), "%d", i));
+                    allKeys.add(String.format(Locale.getDefault(), "%d", i)); // Day numbers (1, 2, 3, ...)
                 }
-                formatter = new SimpleDateFormat("dd", Locale.getDefault()); // Day of the month (01, 02, 03, ...)
+                formatter = new SimpleDateFormat("dd", Locale.ENGLISH); // Day of the month (01, 02, 03, ...)
                 break;
             case YEARLY:
+                // Use months of the year (Jan, Feb, Mar, ...)
                 allKeys = Arrays.asList("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
-                formatter = new SimpleDateFormat("MMM", Locale.getDefault()); // Month name (Jan, Feb, etc.)
+                formatter = new SimpleDateFormat("MMM", Locale.ENGLISH); // Month abbreviation (Jan, Feb, ...)
                 break;
             default:
-                formatter = null; // Error
+                formatter = null; // Error handling
                 break;
         }
 
-        // Initialize with 0 values to ensure all entries are displayed
+        // Initialize the groupedExpenses map with 0 values
         for (String key : allKeys) {
             groupedExpenses.put(key, 0.0);
         }
 
+        // Group expenses by time period (week, month, or year)
         for (Expense expense : expenses) {
             String key = formatter.format(expense.getTransactionDate());
-            groupedExpenses.put(key, groupedExpenses.getOrDefault(key, 0.0) + expense.getAmount());
+
+            // Add the expense amount to the appropriate key in the groupedExpenses map
+            if (groupedExpenses.containsKey(key)) {
+                groupedExpenses.put(key, groupedExpenses.get(key) + expense.getAmount());
+            } else {
+                groupedExpenses.put(key, expense.getAmount());
+            }
         }
 
+        // Create BarEntries and labels
         ArrayList<BarEntry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<>();
         int index = 0;
 
-        for (Map.Entry<String, Double> entry : groupedExpenses.entrySet()) {
-            entries.add(new BarEntry(index, entry.getValue().floatValue()));
-            labels.add(entry.getKey());
+        for (String key : allKeys) {
+            // Ensure we are adding values in the correct order
+            Double amount = groupedExpenses.get(key);
+            entries.add(new BarEntry(index, amount.floatValue()));
+            labels.add(key);
             index++;
         }
 
-        // Create a BarDataSet from the entries
+        // Create a BarDataSet with the entries and set the color
         BarDataSet barDataSet = new BarDataSet(entries, "Expenses");
         barDataSet.setColor(Color.BLUE);  // Set the color of the bars
         barDataSet.setBarBorderWidth(0.2f);
 
+        // Set X-axis labels
         barChart.getXAxis().setLabelCount(labels.size());
         barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
 
-        // Create BarData from the BarDataSet
-        return new BarData(barDataSet);
+        // Create and return BarData
+        BarData barData = new BarData(barDataSet);
+        return barData;
     }
+
+
 
     public void updateData(List<Expense> expenses, TimePeriod timePeriod) {
         this.expenses = expenses;
