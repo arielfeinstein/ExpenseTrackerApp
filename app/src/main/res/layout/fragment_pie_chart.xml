@@ -6,6 +6,17 @@
     android:padding="30dp"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/txtNoExpenses"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:background="@color/secondaryColor"
+        android:textSize="20sp"
+        android:text="@string/no_expenses"
+        android:visibility="gone"/>
+
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pieChart"
         android:layout_width="match_parent"

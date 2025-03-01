@@ -21,7 +21,7 @@
             app:layout_constraintBottom_toTopOf="@+id/chartsSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="30dp"/>
 
         <ProgressBar
             android:id="@+id/chartsProgressBar"

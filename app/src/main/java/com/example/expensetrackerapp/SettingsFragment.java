@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,8 +57,20 @@ public class SettingsFragment extends Fragment {
 
         // handle clear expenses
         btnClearExpenses.setOnClickListener(v -> {
-            // TODO: call the method that clears all the expenses in FireStoreManager
-            // TODO: consider to show a popup window that ask the user are you sure?
+
+            // show a popup window to ask the user if he is sure
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            View popupView = inflater.inflate(R.layout.clear_all_expenses_popup_window, null);
+            PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+            popupView.findViewById(R.id.btnYes).setOnClickListener(v1 -> {
+                // TODO: call the method that clears all the expenses in FireStoreManager
+                FirestoreManager.deleteAllExpenses(FirebaseAuthManager.getUserEmail());
+                popupWindow.dismiss();
+            });
+            popupView.findViewById(R.id.btnClose).setOnClickListener(v2 -> {
+                popupWindow.dismiss();
+            });
         });
 
         // Handle signOut

@@ -491,6 +491,28 @@ public final class FirestoreManager {
                 });
     }
 
+    public static void deleteAllExpenses(String userEmail) {
+        CollectionReference expensesCollectionRef = db.collection(USERS_COLLECTION)
+                .document(userEmail)
+                .collection(EXPENSES_SUBCOLLECTION);
+
+        expensesCollectionRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
+            WriteBatch batch = db.batch();
+
+            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                batch.delete(document.getReference());
+            }
+
+            batch.commit().addOnSuccessListener(aVoid ->
+                    System.out.println("All expenses deleted successfully")
+            ).addOnFailureListener(e ->
+                    System.err.println("Error deleting all expenses: " + e.getMessage())
+            );
+        }).addOnFailureListener(e ->
+                System.err.println("Error fetching expenses: " + e.getMessage())
+        );
+    }
+
 
     // ===================== Categories =====================
 

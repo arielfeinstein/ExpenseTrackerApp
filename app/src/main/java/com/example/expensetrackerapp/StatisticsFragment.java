@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -48,25 +50,25 @@ public class StatisticsFragment extends Fragment {
         progressBar = view.findViewById(R.id.chartsProgressBar);
 
         // add some demo expenses
-//        ArrayList<Expense> expenses = new ArrayList<>();
-//        expenses.add(new Expense(10, new Category("Food", R.drawable.food_category), new Date(), "some description"));
-//        expenses.add(new Expense(20, new Category("Food", R.drawable.food_category), new Date(), "some description 2"));
-//        expenses.add(new Expense(10, new Category("Communications", R.drawable.communications_category), new Date(), "some description 3"));
-//        expenses.add(new Expense(5, new Category("Utilities", R.drawable.utilities_category), new Date(), "some description 4"));
-//
-//        for (Expense expense : expenses) {
-//            FirestoreManager.addExpense(FirebaseAuthManager.getUserEmail(), expense.getCategory().getId(), expense, new FirestoreManager.FirestoreIdCallback() {
-//                @Override
-//                public void onComplete(String id) {
-//                    Toast.makeText(getContext(), "Expense Added: " + id, Toast.LENGTH_LONG).show();
-//                }
-//
-//                @Override
-//                public void onFailure(Exception e) {
-//                    Toast.makeText(getContext(), "Failed!", Toast.LENGTH_LONG).show();
-//                }
-//            });
-//        }
+        ArrayList<Expense> expenses = new ArrayList<>();
+        expenses.add(new Expense(10, new Category("Food", R.drawable.food_category), new Date(), "some description"));
+        expenses.add(new Expense(20, new Category("Food", R.drawable.food_category), new Date(), "some description 2"));
+        expenses.add(new Expense(10, new Category("Communications", R.drawable.communications_category), new Date(), "some description 3"));
+        expenses.add(new Expense(5, new Category("Utilities", R.drawable.utilities_category), new Date(), "some description 4"));
+
+        for (Expense expense : expenses) {
+            FirestoreManager.addExpense(FirebaseAuthManager.getUserEmail(), expense.getCategory().getId(), expense, new FirestoreManager.FirestoreIdCallback() {
+                @Override
+                public void onComplete(String id) {
+
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+
+                }
+            });
+        }
 
         // shows the progress bar and hide the pager
         chartsSection.setVisibility(View.GONE);

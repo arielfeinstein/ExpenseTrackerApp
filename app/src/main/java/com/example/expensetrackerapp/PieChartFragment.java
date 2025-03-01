@@ -2,10 +2,13 @@ package com.example.expensetrackerapp;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.TestLooperManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -25,6 +28,7 @@ import java.util.Random;
 public class PieChartFragment extends Fragment {
     private List<Expense> expenses;
     private PieChart pieChart;
+    private TextView txtNoExpenses;
 
     public PieChartFragment(List<Expense> expenses) {
         this.expenses = expenses;
@@ -36,6 +40,7 @@ public class PieChartFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pie_chart, container, false);
         pieChart = view.findViewById(R.id.pieChart);
+        txtNoExpenses = view.findViewById(R.id.txtNoExpenses);
         updateChart();
         return view;
     }
@@ -142,9 +147,15 @@ public class PieChartFragment extends Fragment {
 
     private void updateChart() {
         if (pieChart != null) {
-            PieData data = generatePieData(expenses);
-            pieChart.setData(data);
-            pieChart.invalidate();
+            if (!expenses.isEmpty()) {
+                PieData data = generatePieData(expenses);
+                pieChart.setData(data);
+                pieChart.invalidate();
+            } else {
+                // no expenses to show - hide the pieChart and shows the TextView
+                pieChart.setVisibility(View.GONE);
+                txtNoExpenses.setVisibility(View.VISIBLE);
+            }
         }
     }
 }

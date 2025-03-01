@@ -146,6 +146,7 @@ public class BarChartFragment extends Fragment {
             barChart.getAxisLeft().setDrawGridLines(false);  // Y-Axis grid (left side)
             barChart.getAxisRight().setDrawGridLines(false);  // Y-Axis grid (right side)
             barChart.getAxisRight().setEnabled(false);
+            barChart.getAxisLeft().setAxisMinimum(0f);
             barChart.getDescription().setEnabled(false);  // Hide description
             // Disable touch interaction (no selection or dragging)
             barChart.setTouchEnabled(false);
