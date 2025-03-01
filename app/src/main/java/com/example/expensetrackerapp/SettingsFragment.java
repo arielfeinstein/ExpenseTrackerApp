@@ -22,66 +22,45 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SettingsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SettingsFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private Button btnSignOut;
+    private Button btnClearExpenses;
+    private TextView txtUserEmail;
 
     public SettingsFragment() {
-        // Required empty public constructor
-    }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SettingsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SettingsFragment newInstance(String param1, String param2) {
-        SettingsFragment fragment = new SettingsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        View view = inflater.inflate(R.layout.fragment_settings, container, false);
+        btnSignOut = view.findViewById(R.id.btn_sign_out);
+        btnClearExpenses = view.findViewById(R.id.btnClearExpenses);
+        txtUserEmail = view.findViewById(R.id.txtUserEmail);
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        // set the user email text
+        txtUserEmail.setText(FirebaseAuthManager.getUserEmail());
+
+        // handle clear expenses
+        btnClearExpenses.setOnClickListener(v -> {
+            // TODO: call the method that clears all the expenses in FireStoreManager
+            // TODO: consider to show a popup window that ask the user are you sure?
+        });
+
         // Handle signOut
-        Button signOutBtn = view.findViewById(R.id.btn_sign_out);
-        signOutBtn.setOnClickListener(v -> {
+        btnSignOut.setOnClickListener(v -> {
             FirebaseAuthManager.signOut();
             Context context = getContext();
             if (context != null) {

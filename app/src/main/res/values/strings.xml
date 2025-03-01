@@ -18,6 +18,7 @@
     <string name="categories">Categories</string>
     <!-- settings strings -->
     <string name="apply">Apply</string>
+    <string name="clear_expenses">Clear All Expenses</string>
     <!-- statistics strings -->
     <string name="weekly">Weekly</string>
     <string name="monthly">Monthly</string>
