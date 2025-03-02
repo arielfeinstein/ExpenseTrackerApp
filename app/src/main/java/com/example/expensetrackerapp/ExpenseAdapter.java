@@ -154,7 +154,9 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
     public void replaceExpenseList(List<Expense> expenseList, Date startingDate, Date endingDate) {
         this.expenseList = expenseList;
         totalExpensesAmount = getTotalExpensesAmount(expenseList);
-        onAmountListener.onAmountChanged(totalExpensesAmount);
+        if (onAmountListener != null) {
+            onAmountListener.onAmountChanged(totalExpensesAmount);
+        }
         notifyDataSetChanged();
         this.startingDate = startingDate;
         this.endingDate = endingDate;
