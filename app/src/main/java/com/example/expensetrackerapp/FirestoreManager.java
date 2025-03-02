@@ -144,7 +144,7 @@ public final class FirestoreManager {
         Log.d("editExpense", "Editing expense with ID: " + expenseId + " for user: " + userEmail);
         Map<String, Object> data = new HashMap<>();
         data.put(AMOUNT_FIELD,modifiedExpense.getAmount());
-        data.put(CATEGORY_ID_FIELD,modifiedExpense.getCategory().getName());
+        data.put(CATEGORY_ID_FIELD,modifiedExpense.getCategory().getId());
         data.put(TRANSACTION_DATE_FIELD,modifiedExpense.getTransactionDate());
         data.put(DESCRIPTION_FIELD,modifiedExpense.getDescription());
 
