@@ -717,7 +717,7 @@ public final class FirestoreManager {
             Task<Category> categoryTask = db.collection(USERS_COLLECTION)
                     .document(userEmail)
                     .collection(CATEGORIES_SUBCOLLECTION)
-                    .document(document.getId()) // Assuming document ID corresponds to category ID
+                    .document(document.getString(CATEGORY_ID_FIELD)) // Assuming document ID corresponds to category ID
                     .get()
                     .continueWith(task -> {
                         Log.d("getCategories", "Fetching category for document: " + document.getId());

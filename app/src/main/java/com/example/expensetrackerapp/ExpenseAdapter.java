@@ -132,6 +132,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
     public void editExpense(int index, Expense expense) {
         // Check if the transaction date has not changed.
         if (expenseList.get(index).getTransactionDate().equals(expense.getTransactionDate())) {
+            // Update total expenses
             totalExpensesAmount -= expenseList.get(index).getAmount();
             expenseList.set(index, expense);
             totalExpensesAmount += expense.getAmount();

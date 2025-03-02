@@ -9,6 +9,10 @@ import android.util.AttributeSet;
 import java.util.Locale;
 import java.util.Objects;
 
+/*
+currently not in use
+ */
+
 public class CurrencyEditText extends androidx.appcompat.widget.AppCompatEditText {
     private static final String SHEKEL_SYMBOL = " ₪";
     private boolean isUpdating = false;

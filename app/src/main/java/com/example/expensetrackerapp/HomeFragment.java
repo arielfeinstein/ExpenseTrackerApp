@@ -287,7 +287,7 @@ public class HomeFragment extends Fragment {
         DatePicker datePicker = popupView.findViewById(R.id.popup_add_expense_date_picker);
         EditText descriptionEditText = popupView.findViewById(R.id.popup_add_expense_description_et);
         TextView categoryEditText = popupView.findViewById(R.id.popup_add_expense_category_et);
-        CurrencyEditText amountEditText = popupView.findViewById(R.id.popup_add_expense_amount_et);
+        EditText amountEditText = popupView.findViewById(R.id.popup_add_expense_amount_et);
         Button actionButton = popupView.findViewById(R.id.popup_add_expense_btn);
         Button removeExpenseBtn = popupView.findViewById(R.id.popup_add_expense_remove_btn);
 
@@ -355,14 +355,23 @@ public class HomeFragment extends Fragment {
             String description = descriptionEditText.getText().toString();
             Category selectedCategory = selectedCategoryIndex[0] != -1 ?
                     categories.get(selectedCategoryIndex[0]) : null;
-            double amount = amountEditText.getAmount();
+            String amountString = amountEditText.getText().toString();
+            // Fetch amount
+            double amountDouble; // will have positive value if amountString is valid
+            try {
+                amountDouble = Double.parseDouble(amountString);
+            }
+            catch (Exception e) {
+                amountDouble = -1;
+            }
 
             // Validate input
-            if (!description.isEmpty() && selectedCategory != null) {
-                Expense expense = new Expense(amount, selectedCategory, expenseDate, description);
+            if (!description.isEmpty() && selectedCategory != null && amountDouble > 0) {
+                Expense expense = new Expense(amountDouble, selectedCategory, expenseDate, description);
                 if (isEditing) {
                     // Edit existing expense
                     String existingExpenseId = currentExpense.getId();
+                    expense.setId(existingExpenseId); // Set the expense id of firestore so that it is up to date in the expense adapter
                     FirestoreManager.editExpense(userEmail, existingExpenseId, expense,
                             new FirestoreManager.FirestoreIdCallback() {
                                 @Override
