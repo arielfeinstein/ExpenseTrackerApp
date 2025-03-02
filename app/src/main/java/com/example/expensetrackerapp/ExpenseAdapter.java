@@ -1,5 +1,8 @@
 package com.example.expensetrackerapp;
 
+import android.content.Context;
+import android.content.res.TypedArray;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,20 +26,22 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
     // onAmountListener.onAmountChanged() is triggered each time the total amount changes
     private onAmountListener onAmountListener;
     private double totalExpensesAmount;
+    private final Context context;
 
-    public ExpenseAdapter() {
-        this(new ArrayList<>(), new Date(), new Date(), null, null);
+    public ExpenseAdapter(Context context) {
+        this(new ArrayList<>(), new Date(), new Date(), null, null, context);
     }
 
     public ExpenseAdapter(@NonNull List<Expense> expenseList, @NonNull Date startingDate,
                           @NonNull Date endingDate, OnItemClickListener itemClickListener,
-                          onAmountListener onAmountListener) {
+                          onAmountListener onAmountListener, Context context) {
         this.expenseList = expenseList;
         totalExpensesAmount = getTotalExpensesAmount(expenseList);
         this.startingDate = startingDate;
         this.endingDate = endingDate;
         this.itemClickListener = itemClickListener;
         this.onAmountListener = onAmountListener;
+        this.context = context;
     }
 
     private static double getTotalExpensesAmount(@NonNull List<Expense> expenses) {
@@ -62,7 +67,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
         // Retrieve necessary fields
         String description = expense.getDescription();
         Date date = expense.getTransactionDate();
-        int categoryImg = expense.getCategory().getImageResourceId();
+        int categoryImgResourceId = getImageResourceId(expense.getCategory().getImgIndexInsideArraysXml());
         double amount = expense.getAmount();
 
         // Convert Date to appropriate text for textView
@@ -77,7 +82,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
         holder.getExpenseDescriptionTV().setText(description);
         holder.getDateTV().setText(formattedDate);
         holder.getAmountTV().setText(formattedAmount);
-        holder.getCategoryImg().setImageResource(categoryImg);
+        holder.getCategoryImg().setImageResource(categoryImgResourceId);
     }
 
     @Override
@@ -219,5 +224,23 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
     // Interface for getting the current total amount of the expense list
     public interface onAmountListener {
         void onAmountChanged(double amount);
+    }
+
+    // Get image resource from arrays.xml using the index
+    private int getImageResourceId(int arraysXmlIndex) {
+        int defaultResourceId = R.drawable.default_category; // if category img not found
+        // Get access to arrays.xml
+        try (TypedArray images = context.getResources().obtainTypedArray(R.array.image_array)) {
+            int resourceId = images.getResourceId(arraysXmlIndex, -1); // -1 is default if out of bounds
+            if (resourceId >= 0) {
+                return resourceId;
+            }
+            else {
+                return defaultResourceId;
+            }
+        } catch (Exception e) {
+            Log.e("ExpenseAdapter", "getImageResourceId: failed to get images array", e);
+        }
+        return defaultResourceId;
     }
 }

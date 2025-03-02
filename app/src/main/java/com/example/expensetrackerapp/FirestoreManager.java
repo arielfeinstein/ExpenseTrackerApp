@@ -3,6 +3,7 @@ package com.example.expensetrackerapp;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.*;
@@ -145,6 +146,7 @@ public final class FirestoreManager {
         Map<String, Object> data = new HashMap<>();
         data.put(AMOUNT_FIELD,modifiedExpense.getAmount());
         data.put(CATEGORY_ID_FIELD,modifiedExpense.getCategory().getId());
+        data.put(TRANSACTION_DATE_FIELD,modifiedExpense.getTransactionDate());
         data.put(TRANSACTION_DATE_FIELD,modifiedExpense.getTransactionDate());
         data.put(DESCRIPTION_FIELD,modifiedExpense.getDescription());
 
@@ -509,6 +511,7 @@ public final class FirestoreManager {
      * @param category The Category object to be added, which must have a name field set.
      * @param callback The FirestoreIdCallback to handle success or failure events. On success, it provides the generated document ID.
      */
+    //todo: consider removing and only using addCategories
     public static void addCategory(String userEmail, Category category, FirestoreIdCallback callback) {
         Log.d("addCategory", "Adding category: " + category.getName() + " for user: " + userEmail);
         // Reference to the categories subcollection
@@ -558,6 +561,112 @@ public final class FirestoreManager {
                     Log.e("addCategory", "Failed to query category name", e);
                     if (callback != null)
                         callback.onFailure(e); // Failed to query category name
+                });
+    }
+
+    /**
+     * Adds multiple categories to the "categories" subcollection under the specified user's document in Firestore.
+     *
+     * Steps:
+     * 1. For each category in the list:
+     *    - Checks if a category with the same name already exists in the user's "categories" subcollection.
+     *    - If no duplicate exists, adds the category with an auto-generated Firestore document ID.
+     *    - Updates the category object and the Firestore document with the assigned ID.
+     * 2. Tracks all operations using Tasks and only calls onComplete when all categories have been processed.
+     * 3. Provides a list of successfully added category IDs through the callback.
+     *
+     * @param userEmail The email of the user under whose document the categories will be added.
+     * @param categories The list of Category objects to be added, each must have a name field set.
+     * @param callback The FirestoreListCallback to handle success or failure events. On success, it provides the list of successfully added category IDs.
+     */
+    public static void addCategories(String userEmail, List<Category> categories, FirestoreListCallback<String> callback) {
+        Log.d("addCategories", "Adding " + categories.size() + " categories for user: " + userEmail);
+
+        // Reference to the categories subcollection
+        CollectionReference categoriesRef = db.collection(USERS_COLLECTION)
+                .document(userEmail)
+                .collection(CATEGORIES_SUBCOLLECTION);
+
+        // List to store tasks for all category additions
+        List<Task<String>> allTasks = new ArrayList<>();
+
+        // Process each category
+        for (Category category : categories) {
+            // Create a task source that will be completed when this category is fully processed
+            TaskCompletionSource<String> taskCompletionSource = new TaskCompletionSource<>();
+            allTasks.add(taskCompletionSource.getTask());
+
+            Log.d("addCategories", "Processing category: " + category.getName());
+
+            // Query to check if a category with the same name already exists
+            categoriesRef.whereEqualTo("name", category.getName())
+                    .get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        if (!querySnapshot.isEmpty()) {
+                            // Category already exists - skip this one
+                            Log.w("addCategories", "Category already exists (skipping): " + category.getName());
+                            taskCompletionSource.setResult(null); // Mark as complete but with null result
+                        } else {
+                            // Category doesn't exist - add with auto-generated ID
+                            categoriesRef.add(category)
+                                    .addOnSuccessListener(documentReference -> {
+                                        // Set the Firestore-assigned ID to the category object
+                                        String generatedId = documentReference.getId();
+                                        category.setId(generatedId);
+                                        Log.d("addCategories", "Added category: " + category.getName() + " with ID: " + generatedId);
+
+                                        // Update the document with the assigned ID
+                                        documentReference.update("id", generatedId)
+                                                .addOnSuccessListener(aVoid -> {
+                                                    Log.d("addCategories", "Updated category document with ID: " + generatedId);
+                                                    taskCompletionSource.setResult(generatedId); // Successfully completed with ID
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Log.e("addCategories", "Failed to update category with ID: " + e.getMessage(), e);
+                                                    taskCompletionSource.setException(e); // Mark as failed
+                                                });
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.e("addCategories", "Failed to add category: " + e.getMessage(), e);
+                                        taskCompletionSource.setException(e); // Mark as failed
+                                    });
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("addCategories", "Failed to query category name: " + e.getMessage(), e);
+                        taskCompletionSource.setException(e); // Mark as failed
+                    });
+        }
+
+        // When all tasks are complete, gather the results and call the callback
+        Tasks.whenAllComplete(allTasks)
+                .addOnCompleteListener(task -> {
+                    List<String> successfulIds = new ArrayList<>();
+                    Exception firstException = null;
+
+                    // Process the results of all tasks
+                    for (Task<String> categoryTask : allTasks) {
+                        if (categoryTask.isSuccessful() && categoryTask.getResult() != null) {
+                            successfulIds.add(categoryTask.getResult());
+                        } else if (categoryTask.getException() != null && firstException == null) {
+                            // Keep track of the first exception encountered
+                            firstException = categoryTask.getException();
+                        }
+                    }
+
+                    // Call appropriate callback method
+                    if (callback != null) {
+                        if (!successfulIds.isEmpty()) {
+                            Log.d("addCategories", "Successfully added " + successfulIds.size() + " categories with IDs: " + successfulIds);
+                            callback.onComplete(successfulIds);
+                        } else if (firstException != null) {
+                            Log.e("addCategories", "Failed to add any categories", firstException);
+                            callback.onFailure(firstException);
+                        } else {
+                            Log.w("addCategories", "No categories were added (all may have been duplicates)");
+                            callback.onComplete(successfulIds); // Empty list
+                        }
+                    }
                 });
     }
 
@@ -754,18 +863,30 @@ public final class FirestoreManager {
      * add default categories - won't be added if already exist
      * @param userEmail the user to which to add the categories
      */
-    public static void addDefaultCategories(String userEmail) {
-        Category utilities = new Category("Utilities", R.drawable.utilities_category);
-        Category transportation = new Category("Transportation", R.drawable.transportation_category);
-        Category food = new Category("Food", R.drawable.food_category);
-        Category insurance = new Category("Insurance", R.drawable.insurance_category);
-        Category communications = new Category("Communications", R.drawable.communications_category);
+    public static void addDefaultCategories(String userEmail, FirestoreListCallback<String> callback) {
+        Category utilities = new Category("Utilities", 0);
+        Category transportation = new Category("Transportation", 1);
+        Category food = new Category("Food", 2);
+        Category insurance = new Category("Insurance", 3);
+        Category communications = new Category("Communications", 4);
 
-        addCategory(userEmail,utilities,null);
-        addCategory(userEmail,transportation,null);
-        addCategory(userEmail,food,null);
-        addCategory(userEmail,insurance,null);
-        addCategory(userEmail,communications,null);
+        List<Category> categories = Arrays.asList(utilities, transportation, food, insurance, communications);
+
+        addCategories(userEmail, categories, new FirestoreListCallback<String>() {
+            @Override
+            public void onComplete(List<String> successfullyAddedIds) {
+                if (callback != null) {
+                    callback.onComplete(successfullyAddedIds);
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                if (callback != null) {
+                    callback.onFailure(e);
+                }
+            }
+        });
 
     }
 

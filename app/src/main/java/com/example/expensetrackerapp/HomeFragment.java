@@ -76,7 +76,7 @@ public class HomeFragment extends Fragment {
         // expenses - by default get the expenses for the current month
         Date[] firstAndLastDaysOfCurrentMonth = getFirstAndLastDayOfTheMonth();
         updateRecyclerList(firstAndLastDaysOfCurrentMonth[0], firstAndLastDaysOfCurrentMonth[1],
-                new ExpenseAdapter(), true);
+                new ExpenseAdapter(requireContext()), true);
 
         // categories
         FirestoreManager.getCategories(userEmail, new FirestoreManager.FirestoreListCallback<Category>() {
