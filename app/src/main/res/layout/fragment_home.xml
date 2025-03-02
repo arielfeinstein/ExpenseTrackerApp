@@ -18,35 +18,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:titleEnabled="false" >
+            app:contentScrim="@color/primaryColor"
+            app:titleEnabled="false">
 
-            <!-- Actual Toolbar -->
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/activity_main_toolbar_inside_collapse_layout"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/primaryColor"
-                app:layout_collapseMode="pin">
-
-                <!-- Title -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="My Expenses"
-                    android:textSize="22sp"
-                    android:textColor="@android:color/white"
-                    android:layout_gravity="center"/>
-
-            </androidx.appcompat.widget.Toolbar>
-
-            <!-- Custom Vertical Layout Inside Collapsing Toolbar -->
+            <!-- Custom Vertical Layout Inside Collapsing Toolbar - THIS WILL COLLAPSE -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center"
                 app:layout_collapseMode="parallax"
-                android:paddingTop="70dp">
+                android:paddingTop="?attr/actionBarSize"
+                android:paddingBottom="16dp">
 
                 <!-- linear layout container for date info -->
                 <LinearLayout
@@ -78,7 +61,6 @@
                             android:text="01/01/2025 - 30/01/2025"
                             android:textColor="@color/black" />
 
-
                     </LinearLayout>
 
                     <ImageView
@@ -89,12 +71,9 @@
                         android:layout_marginHorizontal="8dp"
                         android:layout_gravity="center"/>
 
-
                 </LinearLayout>
 
                 <!-- Total Amount Display -->
-                <!-- todo: change amount display to look like in freeform -->
-
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -127,6 +106,25 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- Actual Toolbar - THIS WILL STAY PINNED -->
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/activity_main_toolbar_inside_collapse_layout"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/primaryColor"
+                app:layout_collapseMode="pin">
+
+                <!-- Title -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="My Expenses"
+                    android:textSize="22sp"
+                    android:textColor="@android:color/white"
+                    android:layout_gravity="center"/>
+
+            </androidx.appcompat.widget.Toolbar>
+
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -148,4 +146,3 @@
         android:contentDescription="add button"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
