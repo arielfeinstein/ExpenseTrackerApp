@@ -141,7 +141,7 @@ public final class FirestoreManager {
      * - Notifies the provided callback about the result of the operation.
      */
     public static void editExpense(String userEmail, String expenseId, Expense modifiedExpense, FirestoreIdCallback callback) {
-        Log.d("FirestoreManager", "Editing expense with ID: " + expenseId + " for user: " + userEmail);
+        Log.d("editExpense", "Editing expense with ID: " + expenseId + " for user: " + userEmail);
         Map<String, Object> data = new HashMap<>();
         data.put(AMOUNT_FIELD,modifiedExpense.getAmount());
         data.put(CATEGORY_ID_FIELD,modifiedExpense.getCategory().getName());
@@ -153,11 +153,11 @@ public final class FirestoreManager {
                 .collection(EXPENSES_SUBCOLLECTION)
                 .document(expenseId).update(data)
                 .addOnSuccessListener(aVoid -> {
-                    Log.d("FirestoreManager", "Expense edited successfully with ID: " + expenseId);
+                    Log.d("editExpense", "Expense edited successfully with ID: " + expenseId);
                     if (callback != null) callback.onComplete(expenseId);
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("FirestoreManager", "Failed to edit expense: " + e.getMessage(), e);
+                    Log.e("editExpense", "Failed to edit expense: " + e.getMessage(), e);
                     if (callback != null) callback.onFailure(e);
                 });
 
@@ -245,7 +245,7 @@ public final class FirestoreManager {
             @Override
             public void onComplete(List<Date> dateRange) {
                 if (dateRange.isEmpty() || dateRange.size() < 2) {
-                    Log.w("GetExpensesByCategoryIds", "No valid date range found.");
+                    Log.w("GetExpenses", "No valid date range found.");
                     if (callback != null) callback.onComplete(new ArrayList<>()); // Return an empty list
                     return;
                 }
@@ -253,19 +253,19 @@ public final class FirestoreManager {
                 Date startingDate = dateRange.get(0); // Oldest transaction date
                 Date endingDate = dateRange.get(1); // Newest transaction date
 
-                Log.d("GetExpensesByCategoryIds", "Transaction date range: From " + startingDate + " to " + endingDate);
+                Log.d("GetExpenses", "Transaction date range: From " + startingDate + " to " + endingDate);
 
                 // Step 2: Fetch all expenses filtered by the provided category IDs within the date range
                 getExpenses(userEmail, categoryIds, startingDate, endingDate, new FirestoreListCallback<Expense>() {
                     @Override
                     public void onComplete(List<Expense> expenses) {
-                        Log.d("GetExpensesByCategoryIds", "Fetched " + expenses.size() + " expenses.");
+                        Log.d("GetExpenses", "Fetched " + expenses.size() + " expenses.");
                         if (callback != null) callback.onComplete(expenses); // Return the complete list of expenses
                     }
 
                     @Override
                     public void onFailure(Exception e) {
-                        Log.e("GetExpensesByCategoryIds", "Failed to fetch expenses: " + e.getMessage(), e);
+                        Log.e("GetExpenses", "Failed to fetch expenses: " + e.getMessage(), e);
                         if (callback != null) callback.onFailure(e);
                     }
                 });
@@ -273,7 +273,7 @@ public final class FirestoreManager {
 
             @Override
             public void onFailure(Exception e) {
-                Log.e("GetExpensesByCategoryIds", "Failed to fetch transaction date range: " + e.getMessage(), e);
+                Log.e("GetExpenses", "Failed to fetch transaction date range: " + e.getMessage(), e);
                 if (callback != null) callback.onFailure(e);
             }
         });
@@ -294,7 +294,7 @@ public final class FirestoreManager {
         getCategories(userEmail, new FirestoreListCallback<Category>() {
             @Override
             public void onComplete(List<Category> categories) {
-                Log.d("GetExpensesByDateRange", "Fetched " + categories.size() + " categories.");
+                Log.d("GetExpenses", "Fetched " + categories.size() + " categories.");
 
                 // Extract category IDs from the categories
                 List<String> categoryIds = new ArrayList<>();
@@ -306,13 +306,13 @@ public final class FirestoreManager {
                 getExpenses(userEmail, categoryIds, startingDate, endingDate, new FirestoreListCallback<Expense>() {
                     @Override
                     public void onComplete(List<Expense> expenses) {
-                        Log.d("GetExpensesByDateRange", "Fetched " + expenses.size() + " expenses.");
+                        Log.d("GetExpenses", "Fetched " + expenses.size() + " expenses.");
                         if (callback != null) callback.onComplete(expenses); // Return the complete list of expenses
                     }
 
                     @Override
                     public void onFailure(Exception e) {
-                        Log.e("GetExpensesByDateRange", "Failed to fetch expenses: " + e.getMessage(), e);
+                        Log.e("GetExpenses", "Failed to fetch expenses: " + e.getMessage(), e);
                         if (callback != null) callback.onFailure(e);
                     }
                 });
@@ -320,7 +320,7 @@ public final class FirestoreManager {
 
             @Override
             public void onFailure(Exception e) {
-                Log.e("GetExpensesByDateRange", "Failed to fetch categories: " + e.getMessage(), e);
+                Log.e("GetExpenses", "Failed to fetch categories: " + e.getMessage(), e);
                 if (callback != null) callback.onFailure(e);
             }
         });
