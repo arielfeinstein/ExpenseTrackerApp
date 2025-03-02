@@ -5,6 +5,7 @@ import static android.view.View.VISIBLE;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
@@ -218,14 +221,15 @@ public class HomeFragment extends Fragment {
         return formattedStartingDate + " - " + formattedEndingDate;
     }
 
-    private void showPopupWindow(@NonNull View anchorView, @NonNull ExpenseAdapter expenseAdapter,List<Category> categories, int position) {
+    private void showPopupWindow(@NonNull View anchorView, @NonNull ExpenseAdapter expenseAdapter,
+                                 List<Category> categories, int position) {
         // Determine if we're adding or editing
         boolean isEditing = position != -1;
 
-        // inflate the layout of the popup window
+        // Inflate the layout of the popup window
         View popupView = getLayoutInflater().inflate(R.layout.popup_add_expense, null);
 
-        // create the popup window
+        // Create the popup window with fixed width for better appearance
         final PopupWindow popupWindow = new PopupWindow(
                 popupView,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -234,17 +238,45 @@ public class HomeFragment extends Fragment {
 
         // Get the current expense if editing
         final Expense currentExpense = isEditing ? expenseAdapter.getExpense(position) : null;
+
+        // Set up popup content
         handleExpensePopup(popupView, popupWindow, categories, expenseAdapter, position, currentExpense, isEditing);
 
-        // dismiss the popup window when touched outside
+        // Add visual enhancements to make the popup stand out
+
+        // 1. Set a higher elevation for stronger shadow
+        popupWindow.setElevation(24f);
+
+        // 2. Add a background with rounded corners
+        GradientDrawable shape = new GradientDrawable();
+        shape.setShape(GradientDrawable.RECTANGLE);
+        shape.setColor(ContextCompat.getColor(getContext(), android.R.color.white));
+        shape.setCornerRadius(16f);
+        shape.setStroke(2, ContextCompat.getColor(getContext(), R.color.primaryColor));
+        popupWindow.setBackgroundDrawable(shape);
+
+        // 3. Add enter/exit animations
+        popupWindow.setAnimationStyle(R.style.PopupAnimation);
+
+        // 4. Add dim effect to background
+        View rootView = getActivity().getWindow().getDecorView().getRootView();
+        WindowManager.LayoutParams params = (WindowManager.LayoutParams) rootView.getLayoutParams();
+        params.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        params.dimAmount = 0.5f;
+        getActivity().getWindow().setAttributes(params);
+
+        // 5. When popup is dismissed, remove dim effect
+        popupWindow.setOnDismissListener(() -> {
+            params.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            getActivity().getWindow().setAttributes(params);
+        });
+
+        // Make outside touchable to dismiss
         popupWindow.setOutsideTouchable(true);
-        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        // Set an elevation value for the popup window.
-        popupWindow.setElevation(10);
-
-        // Show the popup in the center of the fragment
-        popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, 0);
+        // Center the popup with slight offset to avoid it feeling static
+        int yOffset = -50; // Slight upward shift for better visual appeal
+        popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, yOffset);
     }
 
     private void handleExpensePopup(@NonNull View popupView, final PopupWindow popupWindow,
