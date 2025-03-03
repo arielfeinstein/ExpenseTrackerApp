@@ -33,6 +33,7 @@ import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -117,6 +118,11 @@ public class HomeFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.fragment_home_recycler_view);
         TextView totalAmountTV = view.findViewById(R.id.fragment_home_amount_tv);
         View rootView = requireActivity().findViewById(android.R.id.content); // The view of the entire activity
+
+        // add custom item divider to the recycler view
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+        dividerItemDecoration.setDrawable(ContextCompat.getDrawable(context, R.drawable.recycler_item_divider));
+        recyclerView.addItemDecoration(dividerItemDecoration);
         
         // Set selectedDatesTextView to the current range
         updateDateRangeTextView(startingDate, endingDate, selectedDatesTextView);
