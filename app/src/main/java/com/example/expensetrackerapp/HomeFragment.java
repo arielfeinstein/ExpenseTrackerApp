@@ -337,8 +337,19 @@ public class HomeFragment extends Fragment {
 
             // Set remove button listener
             removeExpenseBtn.setOnClickListener(view -> {
-                expenseAdapter.removeExpense(position);
-                popupWindow.dismiss();
+                FirestoreManager.removeExpense(userEmail, currentExpense.getId(), new FirestoreManager.FirestoreIdCallback() {
+                    @Override
+                    public void onComplete(String id) {
+                        expenseAdapter.removeExpense(position);
+                        popupWindow.dismiss();
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(context, "Failed to remove expense, try again later", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             });
         } else {
             // Setup for adding
