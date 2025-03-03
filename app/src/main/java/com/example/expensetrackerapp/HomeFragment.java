@@ -169,6 +169,15 @@ public class HomeFragment extends Fragment {
                 // Get start and end dates
                 Date startDate = new Date(selection.first);
                 Date endDate = new Date(selection.second);
+                Calendar startCal = Calendar.getInstance(Locale.US);
+                startCal.setTime(startDate);
+                setStartOfDay(startCal);
+                startDate = startCal.getTime(); // startDate is now the start of the day
+
+                Calendar endCal = Calendar.getInstance(Locale.US);
+                endCal.setTime(endDate);
+                setEndOfDay(endCal);
+                endDate = endCal.getTime(); // endDate is now the end of the day.
 
                 // Update the expenses list
                 updateRecyclerList(startDate, endDate, expenseAdapter, false);
@@ -214,8 +223,6 @@ public class HomeFragment extends Fragment {
     // Return a string dd/MM/yyyy - dd/MM/yyyy starting date - ending date string from long millis
     private String formatDateRange(Date startingDate, Date endingDate) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC")); //Important for consistent date representation
-
         String formattedStartingDate = sdf.format(startingDate);
         String formattedEndingDate = sdf.format(endingDate);
         return formattedStartingDate + " - " + formattedEndingDate;
@@ -307,7 +314,7 @@ public class HomeFragment extends Fragment {
 
             // Set date
             Date currentExpenseDate = currentExpense.getTransactionDate();
-            Calendar calendar = Calendar.getInstance();
+            Calendar calendar = Calendar.getInstance(Locale.US);
             calendar.setTime(currentExpenseDate);
             int day = calendar.get(Calendar.DAY_OF_MONTH);
             int month = calendar.get(Calendar.MONTH);
@@ -336,7 +343,7 @@ public class HomeFragment extends Fragment {
             removeExpenseBtn.setVisibility(View.GONE);
 
             // Set initial date
-            Calendar calendar = Calendar.getInstance();
+            Calendar calendar = Calendar.getInstance(Locale.US);
             datePicker.updateDate(calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DAY_OF_MONTH));
@@ -462,7 +469,7 @@ public class HomeFragment extends Fragment {
         int day = datePicker.getDayOfMonth();
         int month = datePicker.getMonth(); // 0-11
         int year = datePicker.getYear();
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.set(year, month, day, 0, 0, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
@@ -478,19 +485,36 @@ public class HomeFragment extends Fragment {
         return -1;
     }
 
-    // Return a Date array of size two: [first day, last day] for the current month
-    private static Date[] getFirstAndLastDayOfTheMonth() {
-        Calendar cal = Calendar.getInstance();
+    // Return a Date array of size two: [first day, last day] for the current month,
+    // with start and end of day times.
+    public static Date[] getFirstAndLastDayOfTheMonth() {
+        Calendar cal = Calendar.getInstance(Locale.US);
 
         // Get the first day of the month
         cal.set(Calendar.DAY_OF_MONTH, 1);
+        setStartOfDay(cal);
         Date firstDayOfMonth = cal.getTime();
 
         // Get the last day of the month
         cal.add(Calendar.MONTH, 1);
         cal.add(Calendar.DAY_OF_MONTH, -1);
+        setEndOfDay(cal);
         Date lastDayOfMonth = cal.getTime();
 
         return new Date[] { firstDayOfMonth, lastDayOfMonth };
+    }
+
+    private static void setStartOfDay(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+    }
+
+    private static void setEndOfDay(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
     }
 }
