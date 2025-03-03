@@ -53,6 +53,8 @@ public class HomeFragment extends Fragment {
     private MutableLiveData<List<Category>> categoriesLiveData;
     private MutableLiveData<ExpenseAdapter> expenseAdapterLiveData;
 
+    private final char currencySymbol = '₪';
+
     private String userEmail;
     private Date startingDate, endingDate;
     private Context context; // todo: consider removing and using requireContext where needed
@@ -76,7 +78,7 @@ public class HomeFragment extends Fragment {
         // expenses - by default get the expenses for the current month
         Date[] firstAndLastDaysOfCurrentMonth = getFirstAndLastDayOfTheMonth();
         updateRecyclerList(firstAndLastDaysOfCurrentMonth[0], firstAndLastDaysOfCurrentMonth[1],
-                new ExpenseAdapter(requireContext()), true);
+                new ExpenseAdapter(requireContext(), currencySymbol), true);
 
         // categories
         FirestoreManager.getCategories(userEmail, new FirestoreManager.FirestoreListCallback<Category>() {
@@ -128,10 +130,12 @@ public class HomeFragment extends Fragment {
             // Set adapter
             recyclerView.setAdapter(expenseAdapter);
 
+            // Set total expenses amount for the first time
+            setTotalAmountToTV(expenseAdapter.getTotalExpensesAmount(), totalAmountTV);
+
             // Set total expense amount listener
             expenseAdapter.setOnAmountListener(totalAmount -> {
-                String amountFormattedString = String.format(Locale.US,"%.2f", totalAmount) + "₪";
-                totalAmountTV.setText(amountFormattedString);
+                setTotalAmountToTV(totalAmount, totalAmountTV);
             });
 
             // select custom date listener
@@ -324,7 +328,7 @@ public class HomeFragment extends Fragment {
             // Set description
             descriptionEditText.setText(currentExpense.getDescription());
             // Set amount
-            String amountFormattedString = String.format(Locale.US,"%.2f", currentExpense.getAmount()) + "₪"; // amount with 2 point precision and ₪
+            String amountFormattedString = String.format(Locale.US,"%.2f", currentExpense.getAmount()); // amount with 2 point precision and ₪
             amountEditText.setText(amountFormattedString);
             //Set category
             currentCategory = currentExpense.getCategory(); // will be displayed as the default category inside the category popupmenu.
@@ -516,5 +520,11 @@ public class HomeFragment extends Fragment {
         calendar.set(Calendar.MINUTE, 59);
         calendar.set(Calendar.SECOND, 59);
         calendar.set(Calendar.MILLISECOND, 999);
+    }
+
+    // Set a formatted amount "0.00 <currency_symbol>" inside the textView
+    private void setTotalAmountToTV(double amount, @NonNull TextView amountTV) {
+        String amountFormattedString = String.format(Locale.US,"%.2f", amount) + " " + currencySymbol;
+        amountTV.setText(amountFormattedString);
     }
 }

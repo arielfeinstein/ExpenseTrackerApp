@@ -27,14 +27,16 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
     private onAmountListener onAmountListener;
     private double totalExpensesAmount;
     private final Context context;
+    private final char currencySymbol;
 
-    public ExpenseAdapter(Context context) {
-        this(new ArrayList<>(), new Date(), new Date(), null, null, context);
+    public ExpenseAdapter(Context context, char currencySymbol) {
+        this(new ArrayList<>(), new Date(), new Date(), null, null, context, currencySymbol);
     }
 
     public ExpenseAdapter(@NonNull List<Expense> expenseList, @NonNull Date startingDate,
                           @NonNull Date endingDate, OnItemClickListener itemClickListener,
-                          onAmountListener onAmountListener, Context context) {
+                          onAmountListener onAmountListener, Context context,
+                          char currencySymbol) {
         this.expenseList = expenseList;
         totalExpensesAmount = getTotalExpensesAmount(expenseList);
         this.startingDate = startingDate;
@@ -42,6 +44,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
         this.itemClickListener = itemClickListener;
         this.onAmountListener = onAmountListener;
         this.context = context;
+        this.currencySymbol = currencySymbol;
     }
 
     private static double getTotalExpensesAmount(@NonNull List<Expense> expenses) {
@@ -60,6 +63,10 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
         return new ExpenseViewHolder(itemView, itemClickListener);
     }
 
+    public double getTotalExpensesAmount() {
+        return totalExpensesAmount;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ExpenseViewHolder holder, int position) {
         Expense expense = expenseList.get(position);
@@ -76,7 +83,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
 
         // Convert amount to String with two numbers after decimal point
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        String formattedAmount = decimalFormat.format(amount);
+        String formattedAmount = decimalFormat.format(amount) + " " + currencySymbol;
 
         // Apply texts and img
         holder.getExpenseDescriptionTV().setText(description);
