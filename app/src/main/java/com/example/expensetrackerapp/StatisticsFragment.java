@@ -49,27 +49,6 @@ public class StatisticsFragment extends Fragment {
         chartsSection = view.findViewById(R.id.chartsSection);
         progressBar = view.findViewById(R.id.chartsProgressBar);
 
-        // add some demo expenses
-        ArrayList<Expense> expenses = new ArrayList<>();
-        expenses.add(new Expense(10, new Category("Food", R.drawable.food_category), new Date(), "some description"));
-        expenses.add(new Expense(20, new Category("Food", R.drawable.food_category), new Date(), "some description 2"));
-        expenses.add(new Expense(10, new Category("Communications", R.drawable.communications_category), new Date(), "some description 3"));
-        expenses.add(new Expense(5, new Category("Utilities", R.drawable.utilities_category), new Date(), "some description 4"));
-
-        for (Expense expense : expenses) {
-            FirestoreManager.addExpense(FirebaseAuthManager.getUserEmail(), expense, new FirestoreManager.FirestoreIdCallback() {
-                @Override
-                public void onComplete(String id) {
-
-                }
-
-                @Override
-                public void onFailure(Exception e) {
-
-                }
-            });
-        }
-
         // shows the progress bar and hide the pager
         chartsSection.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
