@@ -9,8 +9,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -61,15 +65,52 @@ public class SettingsFragment extends Fragment {
             // show a popup window to ask the user if he is sure
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View popupView = inflater.inflate(R.layout.clear_all_expenses_popup_window, null);
-            PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            LinearLayout outerFrame = popupView.findViewById(R.id.popup_clear_all_expenses_outer_frame);
+            ConstraintLayout content = popupView.findViewById(R.id.popup_clear_all_expenses_content);
+
+            content.setScaleX(0.8f);
+            content.setScaleY(0.8f);
+            content.setAlpha(0f);
+            content.animate()
+                    .scaleX(1f).scaleY(1f)  // Scale to normal
+                    .alpha(1f)               // Fade in
+                    .setDuration(400)        // Duration 300ms
+                    .setInterpolator(new DecelerateInterpolator()) // Smooth effect
+                    .start();
+
+            PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
+
+            // Make outside touchable to dismiss
+            outerFrame.setOnClickListener(v1 -> {
+                content.animate()
+                        .scaleX(0.8f).scaleY(0.8f)  // Shrink
+                        .alpha(0f)                  // Fade out
+                        .setDuration(300)           // Duration 200ms
+                        .setInterpolator(new AccelerateInterpolator()) // Smooth exit
+                        .withEndAction(popupWindow::dismiss) // Dismiss after animation
+                        .start();
+            });
+            content.setOnClickListener(v1 -> {}); // prevent dismiss when clicking inside the content
+
             popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
             popupView.findViewById(R.id.btnYes).setOnClickListener(v1 -> {
-                // TODO: call the method that clears all the expenses in FireStoreManager
                 FirestoreManager.deleteAllExpenses(FirebaseAuthManager.getUserEmail());
-                popupWindow.dismiss();
+                content.animate()
+                        .scaleX(0.8f).scaleY(0.8f)  // Shrink
+                        .alpha(0f)                  // Fade out
+                        .setDuration(300)           // Duration 200ms
+                        .setInterpolator(new AccelerateInterpolator()) // Smooth exit
+                        .withEndAction(popupWindow::dismiss) // Dismiss after animation
+                        .start();
             });
             popupView.findViewById(R.id.btnClose).setOnClickListener(v2 -> {
-                popupWindow.dismiss();
+                content.animate()
+                        .scaleX(0.8f).scaleY(0.8f)  // Shrink
+                        .alpha(0f)                  // Fade out
+                        .setDuration(300)           // Duration 200ms
+                        .setInterpolator(new AccelerateInterpolator()) // Smooth exit
+                        .withEndAction(popupWindow::dismiss) // Dismiss after animation
+                        .start();
             });
         });
 
