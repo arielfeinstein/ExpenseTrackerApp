@@ -57,7 +57,7 @@ public class StatisticsFragment extends Fragment {
         expenses.add(new Expense(5, new Category("Utilities", R.drawable.utilities_category), new Date(), "some description 4"));
 
         for (Expense expense : expenses) {
-            FirestoreManager.addExpense(FirebaseAuthManager.getUserEmail(), expense.getCategory().getId(), expense, new FirestoreManager.FirestoreIdCallback() {
+            FirestoreManager.addExpense(FirebaseAuthManager.getUserEmail(), expense, new FirestoreManager.FirestoreIdCallback() {
                 @Override
                 public void onComplete(String id) {
 
