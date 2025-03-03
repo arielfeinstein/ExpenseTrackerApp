@@ -27,4 +27,6 @@
     <string name="monthly">Monthly</string>
     <string name="yearly">Yearly</string>
     <string name="no_expenses">You don\'t have any expenses!</string>
+    <!-- categories strings -->
+    <string name="category_name">Food</string>
 </resources>
