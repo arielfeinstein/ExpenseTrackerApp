@@ -18,4 +18,13 @@
     <string name="categories">Categories</string>
     <!-- settings strings -->
     <string name="apply">Apply</string>
+    <string name="clear_expenses">Clear All Expenses</string>
+    <string name="are_you_sure">Are you sure that you want to clear all your expenses?</string>
+    <string name="yes">Yes</string>
+    <string name="close">Close</string>
+    <!-- statistics strings -->
+    <string name="weekly">Weekly</string>
+    <string name="monthly">Monthly</string>
+    <string name="yearly">Yearly</string>
+    <string name="no_expenses">You don\'t have any expenses!</string>
 </resources>

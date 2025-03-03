@@ -1,6 +1,7 @@
 package com.example.expensetrackerapp;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
@@ -493,6 +494,28 @@ public final class FirestoreManager {
                 });
     }
 
+    public static void deleteAllExpenses(String userEmail) {
+        CollectionReference expensesCollectionRef = db.collection(USERS_COLLECTION)
+                .document(userEmail)
+                .collection(EXPENSES_SUBCOLLECTION);
+
+        expensesCollectionRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
+            WriteBatch batch = db.batch();
+
+            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                batch.delete(document.getReference());
+            }
+
+            batch.commit().addOnSuccessListener(aVoid ->
+                    System.out.println("All expenses deleted successfully")
+            ).addOnFailureListener(e ->
+                    System.err.println("Error deleting all expenses: " + e.getMessage())
+            );
+        }).addOnFailureListener(e ->
+                System.err.println("Error fetching expenses: " + e.getMessage())
+        );
+    }
+
 
     // ===================== Categories =====================
 
@@ -826,11 +849,12 @@ public final class FirestoreManager {
             Task<Category> categoryTask = db.collection(USERS_COLLECTION)
                     .document(userEmail)
                     .collection(CATEGORIES_SUBCOLLECTION)
-                    .document(document.getString(CATEGORY_ID_FIELD)) // Assuming document ID corresponds to category ID
+                    .document(document.getString(CATEGORY_ID_FIELD)) // Assuming expense's category ID corresponds to category document ID
                     .get()
                     .continueWith(task -> {
                         Log.d("getCategories", "Fetching category for document: " + document.getId());
                         if (!task.isSuccessful() || task.getResult() == null || !task.getResult().exists()) {
+                            Log.e("Error", "Null Category!");
                             throw new CategoryNotFoundException("Category not found for document: " + document.getId());
                         }
 
