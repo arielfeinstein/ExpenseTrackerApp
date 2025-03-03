@@ -14,9 +14,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
@@ -239,12 +242,14 @@ public class HomeFragment extends Fragment {
 
         // Inflate the layout of the popup window
         View popupView = getLayoutInflater().inflate(R.layout.popup_add_expense, null);
+        FrameLayout outerFrame = popupView.findViewById(R.id.popup_add_expense_outer_frame);
+        LinearLayout content = popupView.findViewById(R.id.popup_add_expense_content);
 
         // Create the popup window with fixed width for better appearance
         final PopupWindow popupWindow = new PopupWindow(
                 popupView,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
                 true);
 
         // Get the current expense if editing
@@ -258,32 +263,41 @@ public class HomeFragment extends Fragment {
         // 1. Set a higher elevation for stronger shadow
         popupWindow.setElevation(24f);
 
-        // 2. Add a background with rounded corners
-        GradientDrawable shape = new GradientDrawable();
-        shape.setShape(GradientDrawable.RECTANGLE);
-        shape.setColor(ContextCompat.getColor(getContext(), android.R.color.white));
-        shape.setCornerRadius(16f);
-        shape.setStroke(2, ContextCompat.getColor(getContext(), R.color.primaryColor));
-        popupWindow.setBackgroundDrawable(shape);
+        // 2. Add enter/exit animations
+        content.setScaleX(0.8f);
+        content.setScaleY(0.8f);
+        content.setAlpha(0f);
+        content.animate()
+                .scaleX(1f).scaleY(1f)  // Scale to normal
+                .alpha(1f)               // Fade in
+                .setDuration(400)        // Duration 300ms
+                .setInterpolator(new DecelerateInterpolator()) // Smooth effect
+                .start();
 
-        // 3. Add enter/exit animations
-        popupWindow.setAnimationStyle(R.style.PopupAnimation);
-
-        // 4. Add dim effect to background
+        // 3. Add dim effect to background
         View rootView = getActivity().getWindow().getDecorView().getRootView();
         WindowManager.LayoutParams params = (WindowManager.LayoutParams) rootView.getLayoutParams();
         params.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         params.dimAmount = 0.5f;
         getActivity().getWindow().setAttributes(params);
 
-        // 5. When popup is dismissed, remove dim effect
+        // 4. When popup is dismissed, remove dim effect
         popupWindow.setOnDismissListener(() -> {
             params.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             getActivity().getWindow().setAttributes(params);
         });
 
         // Make outside touchable to dismiss
-        popupWindow.setOutsideTouchable(true);
+        outerFrame.setOnClickListener(v -> {
+            content.animate()
+                    .scaleX(0.8f).scaleY(0.8f)  // Shrink
+                    .alpha(0f)                  // Fade out
+                    .setDuration(300)           // Duration 200ms
+                    .setInterpolator(new AccelerateInterpolator()) // Smooth exit
+                    .withEndAction(popupWindow::dismiss) // Dismiss after animation
+                    .start();
+        });
+        content.setOnClickListener(v -> {}); // prevent dismiss when clicking inside the content
 
         // Center the popup with slight offset to avoid it feeling static
         int yOffset = -50; // Slight upward shift for better visual appeal
@@ -301,6 +315,7 @@ public class HomeFragment extends Fragment {
         EditText amountEditText = popupView.findViewById(R.id.popup_add_expense_amount_et);
         Button actionButton = popupView.findViewById(R.id.popup_add_expense_btn);
         Button removeExpenseBtn = popupView.findViewById(R.id.popup_add_expense_remove_btn);
+        LinearLayout content = popupView.findViewById(R.id.popup_add_expense_content);
 
         Category currentCategory = null; // Used in category popupmenu to know which category should be displayed in editing mode
 
@@ -341,7 +356,13 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onComplete(String id) {
                         expenseAdapter.removeExpense(position);
-                        popupWindow.dismiss();
+                        content.animate()
+                                .scaleX(0.8f).scaleY(0.8f)  // Shrink
+                                .alpha(0f)                  // Fade out
+                                .setDuration(300)           // Duration 200ms
+                                .setInterpolator(new AccelerateInterpolator()) // Smooth exit
+                                .withEndAction(popupWindow::dismiss) // Dismiss after animation
+                                .start();
                     }
 
                     @Override
@@ -400,12 +421,24 @@ public class HomeFragment extends Fragment {
                                 public void onComplete(String id) {
                                     Log.d("HomeFragment", "edited expense " + id + " successfully");
                                     expenseAdapter.editExpense(position, expense);
-                                    popupWindow.dismiss();
+                                    content.animate()
+                                            .scaleX(0.8f).scaleY(0.8f)  // Shrink
+                                            .alpha(0f)                  // Fade out
+                                            .setDuration(300)           // Duration 200ms
+                                            .setInterpolator(new AccelerateInterpolator()) // Smooth exit
+                                            .withEndAction(popupWindow::dismiss) // Dismiss after animation
+                                            .start();
                                 }
                                 @Override
                                 public void onFailure(Exception e) {
                                     Log.d("HomeFragment", "Failed to edit expense");
-                                    popupWindow.dismiss();
+                                    content.animate()
+                                            .scaleX(0.8f).scaleY(0.8f)  // Shrink
+                                            .alpha(0f)                  // Fade out
+                                            .setDuration(300)           // Duration 200ms
+                                            .setInterpolator(new AccelerateInterpolator()) // Smooth exit
+                                            .withEndAction(popupWindow::dismiss) // Dismiss after animation
+                                            .start();
                                 }
                             });
                 } else {
@@ -416,7 +449,13 @@ public class HomeFragment extends Fragment {
                                 public void onComplete(String id) {
                                     Log.d("HomeFragment", "added new expense " + id + " successfully");
                                     expenseAdapter.addExpense(expense);
-                                    popupWindow.dismiss();
+                                    content.animate()
+                                            .scaleX(0.8f).scaleY(0.8f)  // Shrink
+                                            .alpha(0f)                  // Fade out
+                                            .setDuration(300)           // Duration 200ms
+                                            .setInterpolator(new AccelerateInterpolator()) // Smooth exit
+                                            .withEndAction(popupWindow::dismiss) // Dismiss after animation
+                                            .start();
                                 }
                                 @Override
                                 public void onFailure(Exception e) {
