@@ -1,23 +1,23 @@
 package com.example.expensetrackerapp;
 
 import androidx.annotation.Nullable;
-
 import java.util.Objects;
+import androidx.annotation.NonNull;
 
 public class Category {
     private String id;
     private String name;
-    private int imageResourceId;
+    private int imgIndexInsideArraysXml; // 0 for first img resource, 1 for second img resource and so on...
 
     // No-arg constructor for Firestore
     public Category() {
     }
 
     // Constructor
-    public Category(String name, int imageResourceId) {
+    public Category(String name, int imgIndexInsideArraysXml) {
         this.id = null;
         this.name = name;
-        this.imageResourceId = imageResourceId;
+        this.imgIndexInsideArraysXml = imgIndexInsideArraysXml;
     }
 
     // Getters and setters
@@ -25,8 +25,8 @@ public class Category {
     public void setId(String id) { this.id = id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-    public int getImageResourceId() { return imageResourceId; }
-    public void setImageResourceId(int imageResourceId) { this.imageResourceId = imageResourceId; }
+    public int getImgIndexInsideArraysXml() { return imgIndexInsideArraysXml; }
+    public void setImageResourceId(int imgIndexInsideArraysXml) { this.imgIndexInsideArraysXml = imgIndexInsideArraysXml; }
 
     @Override
     public boolean equals(@Nullable Object obj) {
@@ -42,12 +42,13 @@ public class Category {
     }
 
     // toString
+    @NonNull
     @Override
     public String toString() {
         return "Category{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
-                ", imageResourceId=" + imageResourceId +
+                ", imgIndexInsideArraysXml=" + imgIndexInsideArraysXml +
                 '}';
     }
 }

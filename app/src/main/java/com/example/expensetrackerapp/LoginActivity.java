@@ -14,6 +14,8 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.List;
+
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailET, passwordET, confirmPasswordET;
@@ -123,10 +125,23 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseAuthManager.signUp(email, password, new FirebaseAuthManager.FirebaseAuthCallback() {
             @Override
             public void onSuccess() {
-                FirestoreManager.addDefaultCategories(email);
-                Toast.makeText(getApplicationContext(), "Welcome " + email + "!", Toast.LENGTH_LONG).show();
-                startActivity(intent);
+                FirestoreManager.addDefaultCategories(email, new FirestoreManager.FirestoreListCallback<String>() {
+                    @Override
+                    public void onComplete(List<String> items) {
+                        Log.d("LoginActivity", "addDefaultCategories onComplete:");
+                        Toast.makeText(getApplicationContext(), "Welcome " + email + "!", Toast.LENGTH_LONG).show();
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(LoginActivity.this, "Failed to Signup - failed to contact cloud storage", Toast.LENGTH_SHORT).show();
+                        Log.e("LoginActivity", "addDefaultCategories: Failed", e);
+                    }
+                });
+
             }
+
 
             @Override
             public void onFailure(String errorMsg) {

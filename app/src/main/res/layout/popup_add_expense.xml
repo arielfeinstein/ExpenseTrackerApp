@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/popup_add_expense_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="New Expense"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="12dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date:"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="8dp"/>
+
+        <DatePicker
+            android:id="@+id/popup_add_expense_date_picker"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:calendarViewShown="false"
+            android:datePickerMode="spinner"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:text="Description:"
+            android:layout_gravity="center_vertical"/>
+
+        <EditText
+            android:id="@+id/popup_add_expense_description_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minHeight="40dp"
+            android:background="@drawable/add_expense_input_background" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:text="Category:"
+            android:layout_gravity="center_vertical"/>
+
+        <EditText
+            android:id="@+id/popup_add_expense_category_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="40dp"
+            android:background="@drawable/add_expense_input_background"
+            android:clickable="true"
+            android:gravity="center"
+            android:focusable="false" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:text="Amount:"
+            android:layout_gravity="center_vertical"/>
+
+<!--      currently not in use
+        <com.example.expensetrackerapp.CurrencyEditText
+            android:id="@+id/popup_add_expense_amount_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="40dp"
+            android:background="@drawable/add_expense_input_background"
+            android:gravity="center"
+            android:inputType="numberDecimal" />
+            -->
+
+        <EditText
+            android:id="@+id/popup_add_expense_amount_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="40dp"
+            android:background="@drawable/add_expense_input_background"
+            android:gravity="center"
+            android:inputType="numberDecimal" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/popup_add_expense_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:text="Add"
+            android:backgroundTint="@color/primaryColor"
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/popup_add_expense_remove_btn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:backgroundTint="@color/red"
+            android:text="Remove"
+            android:visibility="gone" />
+    </LinearLayout>
+</LinearLayout>
