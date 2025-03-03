@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -67,10 +69,10 @@ public class BarChartFragment extends Fragment {
             case MONTHLY:
                 // Use day of the month (1, 2, 3, ...)
                 int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+                formatter = new SimpleDateFormat("d", Locale.ENGLISH); // Day of the month (01, 02, 03, ...)
                 for (int i = 1; i <= daysInMonth; i++) {
-                    allKeys.add(String.format(Locale.getDefault(), "%d", i)); // Day numbers (1, 2, 3, ...)
+                    allKeys.add(String.valueOf(i)); // Day numbers (1, 2, 3, ...)
                 }
-                formatter = new SimpleDateFormat("dd", Locale.ENGLISH); // Day of the month (01, 02, 03, ...)
                 break;
             case YEARLY:
                 // Use months of the year (Jan, Feb, Mar, ...)

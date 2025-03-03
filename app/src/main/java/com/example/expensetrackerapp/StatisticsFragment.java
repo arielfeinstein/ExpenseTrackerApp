@@ -131,12 +131,36 @@ public class StatisticsFragment extends Fragment {
         Date startDate;
         switch (timePeriod) {
             case WEEKLY:
-                calendar.add(Calendar.DAY_OF_YEAR, -7);
+                // Move calendar to the start of the week (Sunday)
+                calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
                 startDate = calendar.getTime();
+                // Move calendar to the end of the week (Saturday)
+                calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+                calendar.set(Calendar.HOUR_OF_DAY, 23);
+                calendar.set(Calendar.MINUTE, 59);
+                calendar.set(Calendar.SECOND, 59);
+                calendar.set(Calendar.MILLISECOND, 999);
+                currentDate = calendar.getTime();
                 break;
             case MONTHLY:
-                calendar.add(Calendar.MONTH, -1);
+                // Move to the first day of the current month
+                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
                 startDate = calendar.getTime();
+                // Move to the last day of the current month
+                calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+                calendar.set(Calendar.HOUR_OF_DAY, 23);
+                calendar.set(Calendar.MINUTE, 59);
+                calendar.set(Calendar.SECOND, 59);
+                calendar.set(Calendar.MILLISECOND, 999);
+                currentDate = calendar.getTime();
                 break;
             case YEARLY:
                 calendar.add(Calendar.YEAR, -1);
@@ -147,6 +171,7 @@ public class StatisticsFragment extends Fragment {
                 break;
         }
         String email = FirebaseAuthManager.getUserEmail();
+        Log.d("Dates", "Fetching from: " + startDate + " to: " + currentDate);
         FirestoreManager.getExpenses(email, startDate, currentDate, new FirestoreManager.FirestoreListCallback<Expense>() {
             @Override
             public void onComplete(List<Expense> items) {
