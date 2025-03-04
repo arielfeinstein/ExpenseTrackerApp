@@ -26,6 +26,7 @@ public final class FirestoreManager {
     private static final String DESCRIPTION_FIELD = "description";
     private static final String ID_FIELD = "id";
     private static final String NAME_FIELD = "name";
+    private static final String ICON_INDEX = "imgIndexInsideArraysXml";
 
     // Private constructor to prevent instantiation
     private FirestoreManager() {}
@@ -626,9 +627,9 @@ public final class FirestoreManager {
                     .get()
                     .addOnSuccessListener(querySnapshot -> {
                         if (!querySnapshot.isEmpty()) {
-                            // Category already exists - skip this one
-                            Log.w("addCategories", "Category already exists (skipping): " + category.getName());
-                            taskCompletionSource.setResult(null); // Mark as complete but with null result
+                            // This category name already exists - can't add it
+                            Log.w("addCategories", "Category already exists: " + category.getName());
+                            taskCompletionSource.setException(new CategoryAlreadyExistsException(category.getName()));
                         } else {
                             // Category doesn't exist - add with auto-generated ID
                             categoriesRef.add(category)
@@ -699,9 +700,9 @@ public final class FirestoreManager {
      *
      * This method performs the following steps:
      * 1. Queries the "expenses" subcollection to check if there are any expenses associated with the given categoryId.
-     *    - If there are expenses, it cannot remove the category and triggers an exception via the callback.
+     *    - If there are expenses, it cannot remove the category and triggers the exception via the callback:
+     *      ExpenseWithCategoryExistsException
      * 2. If no expenses are found with the categoryId:
-     *    - Throws a ExpenseWithCategoryExistsException if the category cannot be deleted
      *    - Deletes the category document in the "categories" subcollection with the specified categoryId.
      *
      * @param userEmail The email of the user under whose document the category will be removed.
@@ -798,6 +799,37 @@ public final class FirestoreManager {
                     Log.e("editCategory", "Failed to query category name: " + e.getMessage(), e);
                     if (callback != null)
                         callback.onFailure(e);
+                });
+    }
+
+    /**
+     * If category document is found by categoryId, updates the icon index field and notifies
+     * callback the result.
+     * @param userEmail the user's mail to access his category
+     * @param categoryId the category identifier
+     * @param iconIndex the item index inside arrays.xml representing the drawable icon name
+     * @param callback for result operation
+     */
+    public static void editCategoryIconIndex(String userEmail, String categoryId, int iconIndex, FirestoreIdCallback callback) {
+        DocumentReference categoryDocumentRef =
+                db.collection(USERS_COLLECTION)
+                .document(userEmail).
+                collection(CATEGORIES_SUBCOLLECTION)
+                .document(categoryId);
+        categoryDocumentRef.update(ICON_INDEX, iconIndex)
+                .addOnSuccessListener(aVoid -> {
+                    // Success modifying iconIndex
+                    Log.d("editCategoryIconIndex", "edited category successfully");
+                    if (callback != null) {
+                        callback.onComplete(categoryId);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Failed modifying iconIndex
+                    Log.e("editCategoryIconIndex", "failed to edit category", e);
+                    if (callback != null) {
+                        callback.onFailure(e);
+                    }
                 });
     }
 

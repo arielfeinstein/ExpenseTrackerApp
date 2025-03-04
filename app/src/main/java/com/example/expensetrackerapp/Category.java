@@ -26,7 +26,7 @@ public class Category {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public int getImgIndexInsideArraysXml() { return imgIndexInsideArraysXml; }
-    public void setImageResourceId(int imgIndexInsideArraysXml) { this.imgIndexInsideArraysXml = imgIndexInsideArraysXml; }
+    public void setImgIndexInsideArraysXml(int imgIndexInsideArraysXml) { this.imgIndexInsideArraysXml = imgIndexInsideArraysXml; }
 
     @Override
     public boolean equals(@Nullable Object obj) {
