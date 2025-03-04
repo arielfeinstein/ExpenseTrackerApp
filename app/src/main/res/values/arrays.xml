@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="image_array">
-        <item>@drawable/utilities_category</item>
-        <item>@drawable/transportation_category</item>
-        <item>@drawable/food_category</item>
-        <item>@drawable/insurance_category</item>
-        <item>@drawable/communications_category</item>
+        <item>@drawable/ic_utilities</item>
+        <item>@drawable/ic_transportation</item>
+        <item>@drawable/ic_food</item>
+        <item>@drawable/ic_insurance</item>
+        <item>@drawable/ic_communications</item>
     </array>
 </resources>
