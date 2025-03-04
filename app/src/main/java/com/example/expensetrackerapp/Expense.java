@@ -1,5 +1,7 @@
 package com.example.expensetrackerapp;
 
+import androidx.annotation.NonNull;
+
 import java.util.Date;
 
 public class Expense implements Comparable<Expense> {
@@ -9,7 +11,7 @@ public class Expense implements Comparable<Expense> {
     private Date transactionDate;
     private String description;
 
-    // No-arg constructor for Firestore
+    // No-arg constructor for FireStore
     public Expense() {}
 
     // Constructor
@@ -35,6 +37,7 @@ public class Expense implements Comparable<Expense> {
 
     // toString
 
+    @NonNull
     @Override
     public String toString() {
         return "Expense{" +

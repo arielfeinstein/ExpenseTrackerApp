@@ -5,19 +5,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +22,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.SimpleFormatter;
 
 public class BarChartFragment extends Fragment {
     private List<Expense> expenses;
@@ -124,8 +119,7 @@ public class BarChartFragment extends Fragment {
         barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
 
         // Create and return BarData
-        BarData barData = new BarData(barDataSet);
-        return barData;
+        return new BarData(barDataSet);
     }
 
 

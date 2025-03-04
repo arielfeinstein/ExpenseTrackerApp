@@ -2,12 +2,9 @@ package com.example.expensetrackerapp;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.view.View;
 import android.widget.Button;
-
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,18 +28,15 @@ public class ButtonSelectionManager {
     public void setupButtonGroup(Button[] buttons) {
         for (int i = 0; i < buttons.length; i++) {
             final int index = i;
-            buttons[i].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (selectedButton != null) {
-                        setUnselectedButton(selectedButton);
-                    }
-                    selectedButton = (Button) v;
-                    setSelectedButton(selectedButton);
-
-                    // Notify listeners of the new selection
-                    notifyListeners(index);
+            buttons[i].setOnClickListener(v -> {
+                if (selectedButton != null) {
+                    setUnselectedButton(selectedButton);
                 }
+                selectedButton = (Button) v;
+                setSelectedButton(selectedButton);
+
+                // Notify listeners of the new selection
+                notifyListeners(index);
             });
         }
 
