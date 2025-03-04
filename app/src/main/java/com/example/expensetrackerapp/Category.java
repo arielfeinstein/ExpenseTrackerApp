@@ -9,7 +9,7 @@ public class Category {
     private String name;
     private int imgIndexInsideArraysXml; // 0 for first img resource, 1 for second img resource and so on...
 
-    // No-arg constructor for Firestore
+    // No-arg constructor for FireStore
     public Category() {
     }
 

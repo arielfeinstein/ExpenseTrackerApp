@@ -1,16 +1,12 @@
 package com.example.expensetrackerapp;
 
 import static android.view.View.VISIBLE;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -25,29 +21,21 @@ import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.TimeZone;
 
 public class HomeFragment extends Fragment {
     /*
@@ -85,7 +73,7 @@ public class HomeFragment extends Fragment {
                 new ExpenseAdapter(requireContext(), currencySymbol), true);
 
         // categories
-        FirestoreManager.getCategories(userEmail, new FirestoreManager.FirestoreListCallback<Category>() {
+        FirestoreManager.getCategories(userEmail, new FirestoreManager.FirestoreListCallback<>() {
             @Override
             public void onComplete(List<Category> items) {
                 categoriesLiveData.postValue(items);
@@ -143,14 +131,10 @@ public class HomeFragment extends Fragment {
             setTotalAmountToTV(expenseAdapter.getTotalExpensesAmount(), totalAmountTV);
 
             // Set total expense amount listener
-            expenseAdapter.setOnAmountListener(totalAmount -> {
-                setTotalAmountToTV(totalAmount, totalAmountTV);
-            });
+            expenseAdapter.setOnAmountListener(totalAmount -> setTotalAmountToTV(totalAmount, totalAmountTV));
 
             // select custom date listener
-            selectCustomDateLinearLayout.setOnClickListener(v -> {
-                showDateRangePicker(selectedDatesTextView, expenseAdapter);
-            });
+            selectCustomDateLinearLayout.setOnClickListener(v -> showDateRangePicker(selectedDatesTextView, expenseAdapter));
 
             // observe category list
             categoriesLiveData.observe(getViewLifecycleOwner(), categories -> {
@@ -176,28 +160,25 @@ public class HomeFragment extends Fragment {
 
         final MaterialDatePicker<androidx.core.util.Pair<Long, Long>> picker = builder.build();
 
-        picker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Pair<Long, Long>>() {
-            @Override
-            public void onPositiveButtonClick(androidx.core.util.Pair<Long, Long> selection) {
-                // Get start and end dates
-                Date startDate = new Date(selection.first);
-                Date endDate = new Date(selection.second);
-                Calendar startCal = Calendar.getInstance(Locale.US);
-                startCal.setTime(startDate);
-                setStartOfDay(startCal);
-                startDate = startCal.getTime(); // startDate is now the start of the day
+        picker.addOnPositiveButtonClickListener(selection -> {
+            // Get start and end dates
+            Date startDate = new Date(selection.first);
+            Date endDate = new Date(selection.second);
+            Calendar startCal = Calendar.getInstance(Locale.US);
+            startCal.setTime(startDate);
+            setStartOfDay(startCal);
+            startDate = startCal.getTime(); // startDate is now the start of the day
 
-                Calendar endCal = Calendar.getInstance(Locale.US);
-                endCal.setTime(endDate);
-                setEndOfDay(endCal);
-                endDate = endCal.getTime(); // endDate is now the end of the day.
+            Calendar endCal = Calendar.getInstance(Locale.US);
+            endCal.setTime(endDate);
+            setEndOfDay(endCal);
+            endDate = endCal.getTime(); // endDate is now the end of the day.
 
-                // Update the expenses list
-                updateRecyclerList(startDate, endDate, expenseAdapter, false);
+            // Update the expenses list
+            updateRecyclerList(startDate, endDate, expenseAdapter, false);
 
-                // update the selectDateRangeTextView with the new date range
-                updateDateRangeTextView(startDate, endDate, selectedDateRangeTextView);
-            }
+            // update the selectDateRangeTextView with the new date range
+            updateDateRangeTextView(startDate, endDate, selectedDateRangeTextView);
         });
 
         picker.show(getParentFragmentManager(), picker.toString());
@@ -247,6 +228,7 @@ public class HomeFragment extends Fragment {
         boolean isEditing = position != -1;
 
         // Inflate the layout of the popup window
+        @SuppressLint("InflateParams")
         View popupView = getLayoutInflater().inflate(R.layout.popup_add_expense, null);
         FrameLayout outerFrame = popupView.findViewById(R.id.popup_add_expense_outer_frame);
         LinearLayout content = popupView.findViewById(R.id.popup_add_expense_content);
@@ -294,15 +276,14 @@ public class HomeFragment extends Fragment {
         });
 
         // Make outside touchable to dismiss
-        outerFrame.setOnClickListener(v -> {
-            content.animate()
+        outerFrame.setOnClickListener(v ->
+                content.animate()
                     .scaleX(0.8f).scaleY(0.8f)  // Shrink
                     .alpha(0f)                  // Fade out
                     .setDuration(300)           // Duration 200ms
                     .setInterpolator(new AccelerateInterpolator()) // Smooth exit
                     .withEndAction(popupWindow::dismiss) // Dismiss after animation
-                    .start();
-        });
+                    .start());
         content.setOnClickListener(v -> {}); // prevent dismiss when clicking inside the content
 
         // Center the popup with slight offset to avoid it feeling static
@@ -310,6 +291,7 @@ public class HomeFragment extends Fragment {
         popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, yOffset);
     }
 
+    @SuppressLint("SetTextI18n")
     private void handleExpensePopup(@NonNull View popupView, final PopupWindow popupWindow,
                                     List<Category> categories, @NonNull ExpenseAdapter expenseAdapter,
                                     int position, Expense currentExpense, boolean isEditing) {
@@ -357,7 +339,7 @@ public class HomeFragment extends Fragment {
 
 
             // Set remove button listener
-            removeExpenseBtn.setOnClickListener(view -> {
+            removeExpenseBtn.setOnClickListener(view ->
                 FirestoreManager.removeExpense(userEmail, currentExpense.getId(), new FirestoreManager.FirestoreIdCallback() {
                     @Override
                     public void onComplete(String id) {
@@ -375,9 +357,7 @@ public class HomeFragment extends Fragment {
                     public void onFailure(Exception e) {
                         Toast.makeText(context, "Failed to remove expense, try again later", Toast.LENGTH_SHORT).show();
                     }
-                });
-
-            });
+                }));
         } else {
             // Setup for adding
             titleTextView.setText("New Expense");
@@ -500,28 +480,22 @@ public class HomeFragment extends Fragment {
         }
 
         // showing category popup menu when clicked
-        categoryEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(context, categoryEditText);
+        categoryEditText.setOnClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(context, categoryEditText);
 
-                // Dynamically add menu items
-                for (int i = 0; i < categories.size(); i++) {
-                    popupMenu.getMenu().add(0, i, 0, categories.get(i).getName()); // (groupId, itemId, order, title)
-                }
-
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        int categoryIndex = menuItem.getItemId(); // Get the dynamically assigned categoryIndex
-                        String selectedItem = categories.get(categoryIndex).getName();
-                        categoryEditText.setText(selectedItem);
-                        selectedCategoryIndex[0] = categoryIndex;
-                        return true;
-                    }
-                });
-                popupMenu.show();
+            // Dynamically add menu items
+            for (int i = 0; i < categories.size(); i++) {
+                popupMenu.getMenu().add(0, i, 0, categories.get(i).getName()); // (groupId, itemId, order, title)
             }
+
+            popupMenu.setOnMenuItemClickListener(menuItem -> {
+                int categoryIndex = menuItem.getItemId(); // Get the dynamically assigned categoryIndex
+                String selectedItem = categories.get(categoryIndex).getName();
+                categoryEditText.setText(selectedItem);
+                selectedCategoryIndex[0] = categoryIndex;
+                return true;
+            });
+            popupMenu.show();
         });
     }
 

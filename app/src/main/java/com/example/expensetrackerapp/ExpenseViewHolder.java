@@ -3,15 +3,11 @@ package com.example.expensetrackerapp;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ExpenseViewHolder extends RecyclerView.ViewHolder {
     private final TextView expenseDescriptionTV, dateTV, amountTV;
-    private ImageView categoryImg;
-    
-    // used to return the position of the view in the list when clicked
-    private ExpenseAdapter.OnItemClickListener itemClickListener;
+    private final ImageView categoryImg;
 
     public ExpenseViewHolder(View view, ExpenseAdapter.OnItemClickListener itemClickListener) {
         super(view);
@@ -19,7 +15,7 @@ public class ExpenseViewHolder extends RecyclerView.ViewHolder {
         dateTV = view.findViewById(R.id.expense_item_date_tv);
         amountTV = view.findViewById(R.id.expense_item_amount_tv);
         categoryImg = view.findViewById(R.id.expense_item_iv);
-        this.itemClickListener = itemClickListener;
+        // used to return the position of the view in the list when clicked
 
         // Listener for when the item is clicked - return the position
         view.setOnClickListener(v -> {

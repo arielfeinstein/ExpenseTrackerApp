@@ -51,9 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         // Listener for signup TextView
-        signupInviteTV.setOnClickListener(v -> {
-            loadRegistrationLayout();
-        });
+        signupInviteTV.setOnClickListener(v -> loadRegistrationLayout());
 
         // Listener for EditText text change event
         emailET.addTextChangedListener(new TextWatcher() {
