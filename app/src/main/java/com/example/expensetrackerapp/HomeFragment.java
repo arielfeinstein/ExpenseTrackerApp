@@ -1,8 +1,10 @@
 package com.example.expensetrackerapp;
 
+import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.VISIBLE;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -37,8 +39,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class HomeFragment extends Fragment {
     /*
@@ -47,6 +51,7 @@ public class HomeFragment extends Fragment {
      */
     private MutableLiveData<List<Category>> categoriesLiveData;
     private MutableLiveData<ExpenseAdapter> expenseAdapterLiveData;
+    private ExpenseAdapter expenseAdapter;
 
     private final char currencySymbol = '₪';
 
@@ -72,8 +77,9 @@ public class HomeFragment extends Fragment {
 
         // expenses - by default get the expenses for the current month
         Date[] firstAndLastDaysOfCurrentMonth = getFirstAndLastDayOfTheMonth();
+        expenseAdapter =  new ExpenseAdapter(requireContext(), currencySymbol);
         updateRecyclerList(firstAndLastDaysOfCurrentMonth[0], firstAndLastDaysOfCurrentMonth[1],
-                new ExpenseAdapter(requireContext(), currencySymbol), true);
+                expenseAdapter, true);
 
         // categories
         FirestoreManager.getCategories(userEmail, new FirestoreManager.FirestoreListCallback<Category>() {
@@ -188,17 +194,6 @@ public class HomeFragment extends Fragment {
                 .setInterpolator(new DecelerateInterpolator()) // Smooth effect
                 .start();
 
-        // Make outside touchable to dismiss
-        outerFrame.setOnClickListener(v ->
-                content.animate()
-                        .scaleX(0.8f).scaleY(0.8f)  // Shrink
-                        .alpha(0f)                  // Fade out
-                        .setDuration(300)           // Duration 200ms
-                        .setInterpolator(new AccelerateInterpolator()) // Smooth exit
-                        .withEndAction(popupWindow::dismiss) // Dismiss after animation
-                        .start());
-        content.setOnClickListener(v -> {}); // prevent dismiss when clicking inside the content
-
         // load all categories and initialize the ChipGroup
         initChipGroup(popupWindow, popupView, content);
 
@@ -215,33 +210,75 @@ public class HomeFragment extends Fragment {
         FirestoreManager.getCategories(userEmail, new FirestoreManager.FirestoreListCallback<Category>() {
             @Override
             public void onComplete(List<Category> items) {
-                ArrayList<String> chipLabels = new ArrayList<>();
-
-                // set chipLabels as categories names
-                for (Category category : items) {
-                    chipLabels.add(category.getName());
-                }
+                Set<String> filteredCategoriesIds = getFilteredCategories();
 
                 // add chips to chipGroup
-                for (String label : chipLabels) {
+                for (Category category : items) {
                     Chip chip = new Chip(context);
-                    chip.setText(label);
+                    chip.setText(category.getName());
                     chip.setCheckable(true);
                     chip.setChipBackgroundColorResource(R.color.chip_selector);
+
+                    // restore selection state
+                    if (filteredCategoriesIds.contains(category.getId())) {
+                        chip.setChecked(true);
+                    }
+
+                    // update selection state when chip is checked
+                    chip.setOnCheckedChangeListener(((buttonView, isChecked) -> {
+                        Set<String> updatedFilteredCategoriesIds = getFilteredCategories();
+                        if (isChecked) {
+                            updatedFilteredCategoriesIds.add(category.getId());
+                        } else {
+                            updatedFilteredCategoriesIds.remove(category.getId());
+                        }
+                        saveFilteredCategories(updatedFilteredCategoriesIds);
+                    }));
+
                     chipGroup.addView(chip);
                 }
 
+
                 // handle show results button click
-                btnShowResults.setOnClickListener(v ->
-                        // TODO: save the selected categories and filter expenses list by the selected categories chips
-                        // dismiss the popup
-                        content.animate()
-                                .scaleX(0.8f).scaleY(0.8f)  // Shrink
-                                .alpha(0f)                  // Fade out
-                                .setDuration(300)           // Duration 200ms
-                                .setInterpolator(new AccelerateInterpolator()) // Smooth exit
-                                .withEndAction(popupWindow::dismiss) // Dismiss after animation
-                                .start());
+                btnShowResults.setOnClickListener(v -> {
+                    // TODO: save the selected categories and filter expenses list by the selected categories chips
+                    Set<String> categoriesIds = getFilteredCategories();
+                    String userEmail = FirebaseAuthManager.getUserEmail();
+                    if (!categoriesIds.isEmpty()) {
+                        FirestoreManager.getExpenses(userEmail, new ArrayList<>(categoriesIds), new FirestoreManager.FirestoreListCallback<Expense>() {
+                            @Override
+                            public void onComplete(List<Expense> items) {
+                                expenseAdapter.replaceExpenseList(items, startingDate, endingDate);
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+
+                            }
+                        });
+                    } else {
+                        // no categories to filter by - fetch all expenses
+                        FirestoreManager.getExpenses(userEmail, new FirestoreManager.FirestoreListCallback<Expense>() {
+                            @Override
+                            public void onComplete(List<Expense> items) {
+                                expenseAdapter.replaceExpenseList(items, startingDate, endingDate);
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+
+                            }
+                        });
+                    }
+                    // dismiss the popup
+                    content.animate()
+                            .scaleX(0.8f).scaleY(0.8f)  // Shrink
+                            .alpha(0f)                  // Fade out
+                            .setDuration(300)           // Duration 200ms
+                            .setInterpolator(new AccelerateInterpolator()) // Smooth exit
+                            .withEndAction(popupWindow::dismiss) // Dismiss after animation
+                            .start();
+                });
             }
 
             @Override
@@ -249,6 +286,18 @@ public class HomeFragment extends Fragment {
 
             }
         });
+    }
+
+    private void saveFilteredCategories(Set<String> filteredCategoriesIds) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("prefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putStringSet("filteredCategoriesIds", filteredCategoriesIds);
+        editor.apply();
+    }
+
+    private Set<String> getFilteredCategories() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("prefs", MODE_PRIVATE);
+        return sharedPreferences.getStringSet("filteredCategoriesIds", new HashSet<>());
     }
 
     private void showDateRangePicker(TextView selectedDateRangeTextView, ExpenseAdapter expenseAdapter) {
