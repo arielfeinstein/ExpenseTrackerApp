@@ -10,8 +10,11 @@
     <string name="sign_out">Sign Out</string>
     <string name="app_welcome_paragraph">Welcome to Expense Tracker!\n\nTake control of your money effortlessly with our smart expense management tool.\n\nTrack your spending, set budgets and make informed financial decisions - All in one place!
     </string>
-    <string name="filter">Filter</string>
     <string name="get_started">Get Started</string>
+    <!-- filter strings -->
+    <string name="filter">Filter</string>
+    <string name="show_results">Show Results</string>
+    <string name="filter_header">Choose Categories</string>
     <!-- menu strings -->
     <string name="home">Home</string>
     <string name="settings">Settings</string>

@@ -29,9 +29,12 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -49,7 +52,7 @@ public class HomeFragment extends Fragment {
 
     private String userEmail;
     private Date startingDate, endingDate;
-    private Context context; // todo: consider removing and using requireContext where needed
+    private Context context;
 
 
     public HomeFragment() {
@@ -106,6 +109,10 @@ public class HomeFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.fragment_home_recycler_view);
         TextView totalAmountTV = view.findViewById(R.id.fragment_home_amount_tv);
         View rootView = requireActivity().findViewById(android.R.id.content); // The view of the entire activity
+        View btnFilter = view.findViewById(R.id.btnFilter);
+
+        // set filter button onClick
+        btnFilter.setOnClickListener(v -> showFilterPopup(rootView));
 
         // add custom item divider to the recycler view
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
@@ -153,6 +160,94 @@ public class HomeFragment extends Fragment {
                 });
             });
 
+        });
+    }
+
+    private void showFilterPopup(View view) {
+        // Inflate the layout of the popup window
+        @SuppressLint("InflateParams")
+        View popupView = getLayoutInflater().inflate(R.layout.popup_filter, null);
+        FrameLayout outerFrame = popupView.findViewById(R.id.popup_filter_outer_frame);
+        LinearLayout content = popupView.findViewById(R.id.popup_filter_content);
+
+        // Create the popup window
+        final PopupWindow popupWindow = new PopupWindow(
+                popupView,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                true);
+
+        // Add enter/exit animations
+        content.setScaleX(0.8f);
+        content.setScaleY(0.8f);
+        content.setAlpha(0f);
+        content.animate()
+                .scaleX(1f).scaleY(1f)  // Scale to normal
+                .alpha(1f)               // Fade in
+                .setDuration(400)        // Duration 300ms
+                .setInterpolator(new DecelerateInterpolator()) // Smooth effect
+                .start();
+
+        // Make outside touchable to dismiss
+        outerFrame.setOnClickListener(v ->
+                content.animate()
+                        .scaleX(0.8f).scaleY(0.8f)  // Shrink
+                        .alpha(0f)                  // Fade out
+                        .setDuration(300)           // Duration 200ms
+                        .setInterpolator(new AccelerateInterpolator()) // Smooth exit
+                        .withEndAction(popupWindow::dismiss) // Dismiss after animation
+                        .start());
+        content.setOnClickListener(v -> {}); // prevent dismiss when clicking inside the content
+
+        // load all categories and initialize the ChipGroup
+        initChipGroup(popupWindow, popupView, content);
+
+        // Center the popup with slight offset to avoid it feeling static
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+    }
+
+    private void initChipGroup(PopupWindow popupWindow, View popupView, LinearLayout content) {
+        ChipGroup chipGroup = popupView.findViewById(R.id.chipGroup);
+        Button btnShowResults = popupView.findViewById(R.id.btnShowResults);
+
+        // fetch categories
+        String userEmail = FirebaseAuthManager.getUserEmail();
+        FirestoreManager.getCategories(userEmail, new FirestoreManager.FirestoreListCallback<Category>() {
+            @Override
+            public void onComplete(List<Category> items) {
+                ArrayList<String> chipLabels = new ArrayList<>();
+
+                // set chipLabels as categories names
+                for (Category category : items) {
+                    chipLabels.add(category.getName());
+                }
+
+                // add chips to chipGroup
+                for (String label : chipLabels) {
+                    Chip chip = new Chip(context);
+                    chip.setText(label);
+                    chip.setCheckable(true);
+                    chip.setChipBackgroundColorResource(R.color.chip_selector);
+                    chipGroup.addView(chip);
+                }
+
+                // handle show results button click
+                btnShowResults.setOnClickListener(v ->
+                        // TODO: save the selected categories and filter expenses list by the selected categories chips
+                        // dismiss the popup
+                        content.animate()
+                                .scaleX(0.8f).scaleY(0.8f)  // Shrink
+                                .alpha(0f)                  // Fade out
+                                .setDuration(300)           // Duration 200ms
+                                .setInterpolator(new AccelerateInterpolator()) // Smooth exit
+                                .withEndAction(popupWindow::dismiss) // Dismiss after animation
+                                .start());
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
         });
     }
 
