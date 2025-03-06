@@ -347,6 +347,7 @@ public class HomeFragment extends Fragment {
                                      boolean postLiveData) {
         this.startingDate = startingDate;
         this.endingDate = endingDate;
+        // TODO: check if there is categories to filter by (shared prefs)
         FirestoreManager.getExpenses(userEmail, startingDate, endingDate, new FirestoreManager.FirestoreListCallback<Expense>() {
             @Override
             public void onComplete(List<Expense> expenses) {

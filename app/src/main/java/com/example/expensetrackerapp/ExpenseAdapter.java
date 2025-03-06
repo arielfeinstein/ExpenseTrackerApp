@@ -189,6 +189,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
      * -1.
      */
     private int getInsertIndex(Expense expense) {
+        // TODO: if expense category id is not filtered return -1
         // Determine if the expense should be in the list
         if (!isExpenseInRange(expense)) {
             return -1;
