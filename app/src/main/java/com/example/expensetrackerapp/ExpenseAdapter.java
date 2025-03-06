@@ -197,7 +197,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
         SharedPreferences sharedPreferences = context.getSharedPreferences("prefs", MODE_PRIVATE);
         Set<String> filteredCategoriesIds =  sharedPreferences.getStringSet("filteredCategoriesIds", new HashSet<>());
         String categoryId = expense.getCategory().getId();
-        // TODO: if expense category id is not filtered return -1
+
         // Determine if the expense should be in the list
         if (!isExpenseInRange(expense) || !filteredCategoriesIds.contains(categoryId)) {
             return -1;
