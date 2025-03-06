@@ -68,6 +68,11 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        this.context = getContext();
+
+        // clear all previous saved filters
+        clearAllFilters();
+
         // init class fields
         //live data
         expenseAdapterLiveData = new MutableLiveData<>();
@@ -93,8 +98,6 @@ public class HomeFragment extends Fragment {
                 Log.d("HomeFragment", "Failed to get categories");
             }
         });
-
-        this.context = getContext();
     }
 
     @Override
@@ -169,6 +172,14 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void clearAllFilters() {
+        // clear all filters from shared preferences
+        SharedPreferences sharedPreferences = context.getSharedPreferences("prefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+    }
+
     private void showFilterPopup(View view) {
         // Inflate the layout of the popup window
         @SuppressLint("InflateParams")
@@ -241,11 +252,10 @@ public class HomeFragment extends Fragment {
 
                 // handle show results button click
                 btnShowResults.setOnClickListener(v -> {
-                    // TODO: save the selected categories and filter expenses list by the selected categories chips
                     Set<String> categoriesIds = getFilteredCategories();
                     String userEmail = FirebaseAuthManager.getUserEmail();
                     if (!categoriesIds.isEmpty()) {
-                        FirestoreManager.getExpenses(userEmail, new ArrayList<>(categoriesIds), new FirestoreManager.FirestoreListCallback<Expense>() {
+                        FirestoreManager.getExpenses(userEmail, new ArrayList<>(categoriesIds), startingDate, endingDate, new FirestoreManager.FirestoreListCallback<Expense>() {
                             @Override
                             public void onComplete(List<Expense> items) {
                                 expenseAdapter.replaceExpenseList(items, startingDate, endingDate);
@@ -258,7 +268,7 @@ public class HomeFragment extends Fragment {
                         });
                     } else {
                         // no categories to filter by - fetch all expenses
-                        FirestoreManager.getExpenses(userEmail, new FirestoreManager.FirestoreListCallback<Expense>() {
+                        FirestoreManager.getExpenses(userEmail, startingDate, endingDate, new FirestoreManager.FirestoreListCallback<Expense>() {
                             @Override
                             public void onComplete(List<Expense> items) {
                                 expenseAdapter.replaceExpenseList(items, startingDate, endingDate);
@@ -320,6 +330,10 @@ public class HomeFragment extends Fragment {
             setEndOfDay(endCal);
             endDate = endCal.getTime(); // endDate is now the end of the day.
 
+            // save dates
+            this.startingDate = startDate;
+            this.endingDate = endDate;
+
             // Update the expenses list
             updateRecyclerList(startDate, endDate, expenseAdapter, false);
 
@@ -347,18 +361,36 @@ public class HomeFragment extends Fragment {
                                      boolean postLiveData) {
         this.startingDate = startingDate;
         this.endingDate = endingDate;
-        // TODO: check if there is categories to filter by (shared prefs)
-        FirestoreManager.getExpenses(userEmail, startingDate, endingDate, new FirestoreManager.FirestoreListCallback<Expense>() {
-            @Override
-            public void onComplete(List<Expense> expenses) {
-                expenseAdapter.replaceExpenseList(expenses, startingDate, endingDate);
-                if(postLiveData) expenseAdapterLiveData.postValue(expenseAdapter);
-            }
-            @Override
-            public void onFailure(Exception e) {
-                Log.d("HomeFragment", "Failed to get list of expenses");
-            }
-        });
+        Set<String> filteredCategoriesIds = getFilteredCategories();
+
+        if (!filteredCategoriesIds.isEmpty()) {
+            FirestoreManager.getExpenses(userEmail, new ArrayList<>(filteredCategoriesIds), startingDate, endingDate, new FirestoreManager.FirestoreListCallback<Expense>() {
+                @Override
+                public void onComplete(List<Expense> items) {
+                    expenseAdapter.replaceExpenseList(items, startingDate, endingDate);
+                    if(postLiveData) expenseAdapterLiveData.postValue(expenseAdapter);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+
+                }
+            });
+        } else {
+            // no categories to filter by - fetch all expenses
+            FirestoreManager.getExpenses(userEmail, startingDate, endingDate, new FirestoreManager.FirestoreListCallback<Expense>() {
+                @Override
+                public void onComplete(List<Expense> items) {
+                    expenseAdapter.replaceExpenseList(items, startingDate, endingDate);
+                    if(postLiveData) expenseAdapterLiveData.postValue(expenseAdapter);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Log.d("HomeFragment", "Failed to get list of expenses");
+                }
+            });
+        }
     }
 
     // Return a string dd/MM/yyyy - dd/MM/yyyy starting date - ending date string from long millis

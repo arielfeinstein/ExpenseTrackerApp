@@ -1,6 +1,9 @@
 package com.example.expensetrackerapp;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,8 +18,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
     private List<Expense> expenseList;
@@ -189,9 +194,12 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
      * -1.
      */
     private int getInsertIndex(Expense expense) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("prefs", MODE_PRIVATE);
+        Set<String> filteredCategoriesIds =  sharedPreferences.getStringSet("filteredCategoriesIds", new HashSet<>());
+        String categoryId = expense.getCategory().getId();
         // TODO: if expense category id is not filtered return -1
         // Determine if the expense should be in the list
-        if (!isExpenseInRange(expense)) {
+        if (!isExpenseInRange(expense) || !filteredCategoriesIds.contains(categoryId)) {
             return -1;
         }
 
