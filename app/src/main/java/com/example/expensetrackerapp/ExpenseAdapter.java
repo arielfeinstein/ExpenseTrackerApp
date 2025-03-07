@@ -109,7 +109,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
      */
     public void addExpense(Expense expense) {
         int index = getInsertIndex(expense);
-        if (index < 0) return; // The expense is out of the date range
+        if (index < 0) return; // The expense is out of the date range or out of category filter
         addExpense(index, expense);
     }
 
@@ -148,7 +148,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
      */
     public void editExpense(int index, Expense expense) {
         // Check if the transaction date has not changed.
-        if (expenseList.get(index).getTransactionDate().equals(expense.getTransactionDate())) {
+        if (expenseList.get(index).getTransactionDate().equals(expense.getTransactionDate()) && shouldExpenseBeInTheList(expense)) {
             // Update total expenses
             totalExpensesAmount -= expenseList.get(index).getAmount();
             expenseList.set(index, expense);
@@ -186,20 +186,17 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
 
     /**
      * This method will calculate at what index should the expense sit in inside the expenseList
-     * based on the transaction date.
-     * if the expense transaction date is lower than startingDate or higherThan endingDate
-     * than -1 is returned indicating that the expense should not be in the list.
+     * based on the transaction date and the category
+     * if the expense transaction date is lower than startingDate or higherThan endingDate or is not
+     * in the categories set of the shared preferences than -1 is returned indicating that the
+     * expense should not be in the list.
      * @param expense the expense to calculate where it should sit at in the list
      * @return the index of where the expense should sit at, if it shouldn't be in the list, return
      * -1.
      */
     private int getInsertIndex(Expense expense) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("prefs", MODE_PRIVATE);
-        Set<String> filteredCategoriesIds =  sharedPreferences.getStringSet("filteredCategoriesIds", new HashSet<>());
-        String categoryId = expense.getCategory().getId();
-
         // Determine if the expense should be in the list
-        if (!isExpenseInRange(expense) || !filteredCategoriesIds.contains(categoryId)) {
+        if (!shouldExpenseBeInTheList(expense)) {
             return -1;
         }
 
@@ -228,7 +225,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
 
     // Return true if the expense's transaction date is in the date range.
     private boolean isExpenseInRange(Expense expense) {
-        return  (expense.getTransactionDate().compareTo(startingDate) >= 0 &&
+        return (expense.getTransactionDate().compareTo(startingDate) >= 0 &&
                 expense.getTransactionDate().compareTo(endingDate) <= 0);
     }
 
@@ -258,5 +255,29 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
             Log.e("ExpenseAdapter", "getImageResourceId: failed to get images array", e);
         }
         return defaultResourceId;
+    }
+
+    /**
+     * Determine whether an expense should be in the list based on the date range and the current
+     * category filter settings.
+     * @param expense check to see if the expense should be in the list
+     * @return true if the expense should be in the list, else return false.
+     */
+    private boolean shouldExpenseBeInTheList(Expense expense) {
+        // Get filtered categories' ids
+        SharedPreferences sharedPreferences = context.getSharedPreferences("prefs", MODE_PRIVATE);
+        Set<String> filteredCategoriesIds =  sharedPreferences.getStringSet("filteredCategoriesIds", new HashSet<>());
+
+        // Get expense's category's id
+        String categoryId = expense.getCategory().getId();
+
+        // DEBUG
+        String TAG = "shouldExpenseBeInTheList";
+        Log.d(TAG, "expense category id = " + categoryId);
+        Log.d(TAG, "category set = " + filteredCategoriesIds);
+
+        // Determine if the expense should be in the list
+        return isExpenseInRange(expense) && filteredCategoriesIds.contains(categoryId);
+
     }
 }
