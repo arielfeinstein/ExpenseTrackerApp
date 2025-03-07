@@ -76,7 +76,7 @@ public class CategoriesFragment extends Fragment {
         final int GRID_COLUMN_AMOUNT = 2;
 
         // Access views
-        RecyclerView recyclerView = view.findViewById(R.id.fragment_categories_recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.fragment_categories_recycler_view); // todo: change to grid view
         FloatingActionButton addCategoryBtn = view.findViewById(R.id.btnAddCategory);
         View rootView = requireActivity().findViewById(android.R.id.content); // The view of the entire activity
 
@@ -85,6 +85,7 @@ public class CategoriesFragment extends Fragment {
 
         categoryAdapterMutableLiveData.observe(getViewLifecycleOwner(), categoryAdapter -> {
             // retrieving category process is complete.
+            //todo: create a initGrid() method
 
             // attaching adapter to recyclerView
             recyclerView.setLayoutManager(layoutManager);
@@ -269,7 +270,7 @@ public class CategoriesFragment extends Fragment {
                     public void onComplete(String id) {
                         // Successfully removed currentCategory from firestore
                         categoryAdapter.removeCategory(position);
-                        popupWindow.dismiss();
+                        popupWindow.dismiss(); //todo dismiss with style
                     }
 
                     @Override
@@ -331,7 +332,7 @@ public class CategoriesFragment extends Fragment {
                     newCategory.setId(currentCategory.getId()); // Need to store the firestore id in the new category
                     if (newCategoryName.equals(currentCategory.getName()) && imgIndexArr[0] == currentCategory.getImgIndexInsideArraysXml()) {
                         // Nothing is changed, dismiss
-                        popupWindow.dismiss();
+                        popupWindow.dismiss(); // todo: dismiss with style
                     }
                     else if (newCategoryName.equals(currentCategory.getName())) {
                         // only icon changed
@@ -340,7 +341,7 @@ public class CategoriesFragment extends Fragment {
                             public void onComplete(String id) {
                                 // Successfully edited icon
                                 categoryAdapter.editCategory(position,newCategory);
-                                popupWindow.dismiss();
+                                popupWindow.dismiss(); //todo: dismiss with style
                             }
 
                             @Override
@@ -359,7 +360,7 @@ public class CategoriesFragment extends Fragment {
                                     public void onComplete(String id) {
                                         // Successfully edited category
                                         categoryAdapter.editCategory(position, newCategory);
-                                        popupWindow.dismiss();
+                                        popupWindow.dismiss(); //todo: dismiss with style
                                     }
 
                                     @Override
@@ -387,7 +388,7 @@ public class CategoriesFragment extends Fragment {
                                     // Successfully added category
                                     newCategory.setId(idList.get(0)); // Set the id firestore allocated
                                     categoryAdapter.addCategory(newCategory);
-                                    popupWindow.dismiss();
+                                    popupWindow.dismiss(); //todo: dismiss with style
 
                                 }
 
