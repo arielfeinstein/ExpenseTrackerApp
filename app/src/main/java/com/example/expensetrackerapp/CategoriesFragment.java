@@ -164,16 +164,6 @@ public class CategoriesFragment extends Fragment {
         // Get the current expense if editing
         final Category currentCategory = isEditing ? categoryAdapter.getCategory(position) : null;
 
-        //DEBUG
-        final String TAG = "debug";
-        if (currentCategory == null) {
-            Log.d(TAG, "currentCategory: null");
-        }
-        else {
-            Log.d(TAG, "currentCategory: " + currentCategory);
-        }
-        Log.d(TAG, "position: " + position);
-
         // Set up popup content
         handleCategoryPopup(categoryAdapter, currentCategory, position, popupView, popupWindow);
 
