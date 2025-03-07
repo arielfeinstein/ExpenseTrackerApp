@@ -41,7 +41,7 @@
                 android:id="@+id/popup_category_icon_iv"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
-                android:src="@drawable/default_category"
+                android:src="@drawable/ic_default_category"
                 android:gravity="center"/>
         </LinearLayout>
 

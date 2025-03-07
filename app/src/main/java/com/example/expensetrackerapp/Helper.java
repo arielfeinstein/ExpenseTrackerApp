@@ -10,7 +10,7 @@ import java.util.List;
 public class Helper {
     // Get image resource from arrays.xml using the index
     public static int getImageResourceId(int arraysXmlIndex, Context context) {
-        int defaultResourceId = R.drawable.default_category; // if category img not found
+        int defaultResourceId = R.drawable.ic_default_category; // if category img not found
         // Get access to arrays.xml
         try (TypedArray images = context.getResources().obtainTypedArray(R.array.image_array)) {
             int resourceId = images.getResourceId(arraysXmlIndex, -1); // -1 is default if out of bounds
