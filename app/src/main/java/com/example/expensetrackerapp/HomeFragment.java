@@ -1,8 +1,10 @@
 package com.example.expensetrackerapp;
 
+import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.VISIBLE;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -29,13 +31,19 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+
 
 public class HomeFragment extends Fragment {
     /*
@@ -44,12 +52,13 @@ public class HomeFragment extends Fragment {
      */
     private MutableLiveData<List<Category>> categoriesLiveData;
     private MutableLiveData<ExpenseAdapter> expenseAdapterLiveData;
+    private ExpenseAdapter expenseAdapter;
 
     private final char currencySymbol = '₪';
 
     private String userEmail;
     private Date startingDate, endingDate;
-    private Context context; // todo: consider removing and using requireContext where needed
+    private Context context;
 
 
     public HomeFragment() {
@@ -60,6 +69,11 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        this.context = getContext();
+
+        // clear all previous saved filters
+        clearAllFilters();
+
         // init class fields
         //live data
         expenseAdapterLiveData = new MutableLiveData<>();
@@ -69,8 +83,9 @@ public class HomeFragment extends Fragment {
 
         // expenses - by default get the expenses for the current month
         Date[] firstAndLastDaysOfCurrentMonth = getFirstAndLastDayOfTheMonth();
+        expenseAdapter =  new ExpenseAdapter(requireContext(), currencySymbol);
         updateRecyclerList(firstAndLastDaysOfCurrentMonth[0], firstAndLastDaysOfCurrentMonth[1],
-                new ExpenseAdapter(requireContext(), currencySymbol), true);
+                expenseAdapter, true);
 
         // categories
         FirestoreManager.getCategories(userEmail, new FirestoreManager.FirestoreListCallback<Category>() {
@@ -84,8 +99,6 @@ public class HomeFragment extends Fragment {
                 Log.d("HomeFragment", "Failed to get categories");
             }
         });
-
-        this.context = getContext();
     }
 
     @Override
@@ -106,6 +119,7 @@ public class HomeFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.fragment_home_recycler_view);
         TextView totalAmountTV = view.findViewById(R.id.fragment_home_amount_tv);
         View rootView = requireActivity().findViewById(android.R.id.content); // The view of the entire activity
+        View btnFilter = view.findViewById(R.id.btnFilter);
 
         // add custom item divider to the recycler view
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
@@ -140,6 +154,10 @@ public class HomeFragment extends Fragment {
 
             // observe category list
             categoriesLiveData.observe(getViewLifecycleOwner(), categories -> {
+
+                // set filter button onClick
+                btnFilter.setOnClickListener(v -> showFilterPopup(rootView, categories));
+
                 // add expense listener
                 floatingAddButton.setOnClickListener(v -> {
                     // position -1 to indicate add expense popup window
@@ -154,6 +172,140 @@ public class HomeFragment extends Fragment {
             });
 
         });
+    }
+
+    private void clearAllFilters() {
+        // clear all filters from shared preferences
+        SharedPreferences sharedPreferences = context.getSharedPreferences("prefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+    }
+
+    private void showFilterPopup(View view, List<Category> categories) {
+        // Inflate the layout of the popup window
+        @SuppressLint("InflateParams")
+        View popupView = getLayoutInflater().inflate(R.layout.popup_filter, null);
+        FrameLayout outerFrame = popupView.findViewById(R.id.popup_filter_outer_frame);
+        LinearLayout content = popupView.findViewById(R.id.popup_filter_content);
+
+        // Create the popup window
+        final PopupWindow popupWindow = new PopupWindow(
+                popupView,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                true);
+
+        // Add enter animations
+        content.setScaleX(0.8f);
+        content.setScaleY(0.8f);
+        content.setAlpha(0f);
+        content.animate()
+                .scaleX(1f).scaleY(1f)  // Scale to normal
+                .alpha(1f)               // Fade in
+                .setDuration(400)        // Duration 300ms
+                .setInterpolator(new DecelerateInterpolator()) // Smooth effect
+                .start();
+
+        // Make outside touchable to dismiss
+        outerFrame.setOnClickListener(v ->
+                content.animate()
+                        .scaleX(0.8f).scaleY(0.8f)  // Shrink
+                        .alpha(0f)                  // Fade out
+                        .setDuration(300)           // Duration 200ms
+                        .setInterpolator(new AccelerateInterpolator()) // Smooth exit
+                        .withEndAction(popupWindow::dismiss) // Dismiss after animation
+                        .start());
+        content.setOnClickListener(v -> {}); // prevent dismiss when clicking inside the content
+
+        // load all categories and initialize the ChipGroup
+        initChipGroup(popupWindow, popupView, content, categories);
+
+        // Center the popup with slight offset to avoid it feeling static
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+    }
+
+    private void initChipGroup(PopupWindow popupWindow, View popupView, LinearLayout content, List<Category> categories) {
+        ChipGroup chipGroup = popupView.findViewById(R.id.chipGroup);
+        Button btnShowResults = popupView.findViewById(R.id.btnShowResults);
+        Set<String> filteredCategoriesIds = getFilteredCategories();
+
+        // add chips to chipGroup
+        for (Category category : categories) {
+            Chip chip = new Chip(context);
+            chip.setText(category.getName());
+            chip.setCheckable(true);
+            chip.setChipBackgroundColorResource(R.color.chip_selector);
+
+            // restore selection state
+            if (filteredCategoriesIds.contains(category.getId())) {
+                chip.setChecked(true);
+            }
+
+            // update selection state when chip is checked
+            chip.setOnCheckedChangeListener(((buttonView, isChecked) -> {
+                Set<String> updatedFilteredCategoriesIds = getFilteredCategories();
+                if (isChecked) {
+                    updatedFilteredCategoriesIds.add(category.getId());
+                } else {
+                    updatedFilteredCategoriesIds.remove(category.getId());
+                }
+                saveFilteredCategories(updatedFilteredCategoriesIds);
+            }));
+
+            chipGroup.addView(chip);
+        }
+
+        // handle show results button click
+        btnShowResults.setOnClickListener(v -> {
+            Set<String> categoriesIds = getFilteredCategories();
+            if (!categoriesIds.isEmpty()) {
+                FirestoreManager.getExpenses(userEmail, new ArrayList<>(categoriesIds), startingDate, endingDate, new FirestoreManager.FirestoreListCallback<Expense>() {
+                    @Override
+                    public void onComplete(List<Expense> items) {
+                        expenseAdapter.replaceExpenseList(items, startingDate, endingDate);
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.d("HomeFragment", "failed to fetch filtered expenses - try again later");
+                    }
+                });
+            } else {
+                // no categories to filter by - fetch all expenses
+                FirestoreManager.getExpenses(userEmail, startingDate, endingDate, new FirestoreManager.FirestoreListCallback<Expense>() {
+                    @Override
+                    public void onComplete(List<Expense> items) {
+                        expenseAdapter.replaceExpenseList(items, startingDate, endingDate);
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+
+                    }
+                });
+            }
+            // dismiss the popup
+            content.animate()
+                    .scaleX(0.8f).scaleY(0.8f)  // Shrink
+                    .alpha(0f)                  // Fade out
+                    .setDuration(300)           // Duration 200ms
+                    .setInterpolator(new AccelerateInterpolator()) // Smooth exit
+                    .withEndAction(popupWindow::dismiss) // Dismiss after animation
+                    .start();
+        });
+    }
+
+    private void saveFilteredCategories(Set<String> filteredCategoriesIds) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("prefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putStringSet("filteredCategoriesIds", filteredCategoriesIds);
+        editor.apply();
+    }
+
+    private Set<String> getFilteredCategories() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("prefs", MODE_PRIVATE);
+        return sharedPreferences.getStringSet("filteredCategoriesIds", new HashSet<>());
     }
 
     private void showDateRangePicker(TextView selectedDateRangeTextView, ExpenseAdapter expenseAdapter) {
@@ -175,6 +327,10 @@ public class HomeFragment extends Fragment {
             endCal.setTime(endDate);
             setEndOfDay(endCal);
             endDate = endCal.getTime(); // endDate is now the end of the day.
+
+            // save dates
+            this.startingDate = startDate;
+            this.endingDate = endDate;
 
             // Update the expenses list
             updateRecyclerList(startDate, endDate, expenseAdapter, false);
@@ -203,17 +359,36 @@ public class HomeFragment extends Fragment {
                                      boolean postLiveData) {
         this.startingDate = startingDate;
         this.endingDate = endingDate;
-        FirestoreManager.getExpenses(userEmail, startingDate, endingDate, new FirestoreManager.FirestoreListCallback<Expense>() {
-            @Override
-            public void onComplete(List<Expense> expenses) {
-                expenseAdapter.replaceExpenseList(expenses, startingDate, endingDate);
-                if(postLiveData) expenseAdapterLiveData.postValue(expenseAdapter);
-            }
-            @Override
-            public void onFailure(Exception e) {
-                Log.d("HomeFragment", "Failed to get list of expenses");
-            }
-        });
+        Set<String> filteredCategoriesIds = getFilteredCategories();
+
+        if (!filteredCategoriesIds.isEmpty()) {
+            FirestoreManager.getExpenses(userEmail, new ArrayList<>(filteredCategoriesIds), startingDate, endingDate, new FirestoreManager.FirestoreListCallback<Expense>() {
+                @Override
+                public void onComplete(List<Expense> items) {
+                    expenseAdapter.replaceExpenseList(items, startingDate, endingDate);
+                    if(postLiveData) expenseAdapterLiveData.postValue(expenseAdapter);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+
+                }
+            });
+        } else {
+            // no categories to filter by - fetch all expenses
+            FirestoreManager.getExpenses(userEmail, startingDate, endingDate, new FirestoreManager.FirestoreListCallback<Expense>() {
+                @Override
+                public void onComplete(List<Expense> items) {
+                    expenseAdapter.replaceExpenseList(items, startingDate, endingDate);
+                    if(postLiveData) expenseAdapterLiveData.postValue(expenseAdapter);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Log.d("HomeFragment", "Failed to get list of expenses");
+                }
+            });
+        }
     }
 
     // Return a string dd/MM/yyyy - dd/MM/yyyy starting date - ending date string from long millis
