@@ -15,6 +15,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -76,7 +77,7 @@ public class CategoriesFragment extends Fragment {
         final int GRID_COLUMN_AMOUNT = 2;
 
         // Access views
-        RecyclerView recyclerView = view.findViewById(R.id.fragment_categories_recycler_view); // todo: change to grid view
+        GridView gridView = view.findViewById(R.id.gridViewCategories);
         FloatingActionButton addCategoryBtn = view.findViewById(R.id.btnAddCategory);
         View rootView = requireActivity().findViewById(android.R.id.content); // The view of the entire activity
 
@@ -85,16 +86,13 @@ public class CategoriesFragment extends Fragment {
 
         categoryAdapterMutableLiveData.observe(getViewLifecycleOwner(), categoryAdapter -> {
             // retrieving category process is complete.
-            //todo: create a initGrid() method
 
-            // attaching adapter to recyclerView
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.setAdapter(categoryAdapter);
+            // attaching adapter to gridView
+            gridView.setAdapter(categoryAdapter);
 
-            // Set category click listener
-            categoryAdapter.setOnItemClickListener(position -> {
-                // Show popup for editing the category clicked
-                showPopupWindow(rootView,categoryAdapter, position);
+            // Set category item click listener
+            gridView.setOnItemClickListener((parent, itemView, position, id) -> {
+                showPopupWindow(rootView,categoryAdapter,position);
             });
 
             // Set add category button click listener
@@ -270,7 +268,8 @@ public class CategoriesFragment extends Fragment {
                     public void onComplete(String id) {
                         // Successfully removed currentCategory from firestore
                         categoryAdapter.removeCategory(position);
-                        popupWindow.dismiss(); //todo dismiss with style
+                        dismissPopupWithAnimation(popupView, popupWindow);
+
                     }
 
                     @Override
@@ -332,7 +331,7 @@ public class CategoriesFragment extends Fragment {
                     newCategory.setId(currentCategory.getId()); // Need to store the firestore id in the new category
                     if (newCategoryName.equals(currentCategory.getName()) && imgIndexArr[0] == currentCategory.getImgIndexInsideArraysXml()) {
                         // Nothing is changed, dismiss
-                        popupWindow.dismiss(); // todo: dismiss with style
+                        dismissPopupWithAnimation(popupView, popupWindow);
                     }
                     else if (newCategoryName.equals(currentCategory.getName())) {
                         // only icon changed
@@ -341,7 +340,7 @@ public class CategoriesFragment extends Fragment {
                             public void onComplete(String id) {
                                 // Successfully edited icon
                                 categoryAdapter.editCategory(position,newCategory);
-                                popupWindow.dismiss(); //todo: dismiss with style
+                                dismissPopupWithAnimation(popupView, popupWindow);
                             }
 
                             @Override
@@ -360,7 +359,7 @@ public class CategoriesFragment extends Fragment {
                                     public void onComplete(String id) {
                                         // Successfully edited category
                                         categoryAdapter.editCategory(position, newCategory);
-                                        popupWindow.dismiss(); //todo: dismiss with style
+                                        dismissPopupWithAnimation(popupView, popupWindow);
                                     }
 
                                     @Override
@@ -388,7 +387,7 @@ public class CategoriesFragment extends Fragment {
                                     // Successfully added category
                                     newCategory.setId(idList.get(0)); // Set the id firestore allocated
                                     categoryAdapter.addCategory(newCategory);
-                                    popupWindow.dismiss(); //todo: dismiss with style
+                                    dismissPopupWithAnimation(popupView, popupWindow);
 
                                 }
 
@@ -409,5 +408,15 @@ public class CategoriesFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private static void dismissPopupWithAnimation(@NonNull View popupView, @NonNull PopupWindow popupWindow) {
+        popupView.animate()
+                .scaleX(0.8f).scaleY(0.8f)  // Shrink
+                .alpha(0f)                  // Fade out
+                .setDuration(300)           // Duration 200ms
+                .setInterpolator(new AccelerateInterpolator()) // Smooth exit
+                .withEndAction(popupWindow::dismiss) // Dismiss after animation
+                .start();
     }
 }
