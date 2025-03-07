@@ -2,6 +2,7 @@ package com.example.expensetrackerapp;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
@@ -9,10 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -169,6 +168,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
      * @param startingDate the new starting date
      * @param endingDate the new ending date
      */
+    @SuppressLint("NotifyDataSetChanged")
     public void replaceExpenseList(List<Expense> expenseList, Date startingDate, Date endingDate) {
         this.expenseList = expenseList;
         totalExpensesAmount = getTotalExpensesAmount(expenseList);
