@@ -6,5 +6,6 @@
         <item>@drawable/ic_food</item>
         <item>@drawable/ic_insurance</item>
         <item>@drawable/ic_communications</item>
+        <item>@drawable/default_category</item> <!-- default category needs to be the last item -->
     </array>
 </resources>
