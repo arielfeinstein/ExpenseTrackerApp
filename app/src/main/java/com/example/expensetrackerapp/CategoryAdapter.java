@@ -19,18 +19,11 @@ public class CategoryAdapter extends BaseAdapter {
 
     private List<Category> categories;
     private Context context;
-    private OnItemClickListener onItemClickListener; //todo: inspect
 
 
     public CategoryAdapter(List<Category> categories, Context context) {
         this.categories = categories;
         this.context = context;
-        this.onItemClickListener = null; //todo: inspect
-    }
-
-    //todo: inspect
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
     }
 
     public Category getCategory(int position) {
