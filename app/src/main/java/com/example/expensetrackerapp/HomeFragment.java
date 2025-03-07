@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+
 public class HomeFragment extends Fragment {
     /*
     expensesLiveData holds the expensesList. This wrapper is used in order to know when the
@@ -194,7 +195,7 @@ public class HomeFragment extends Fragment {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 true);
 
-        // Add enter/exit animations
+        // Add enter animations
         content.setScaleX(0.8f);
         content.setScaleY(0.8f);
         content.setAlpha(0f);
@@ -204,6 +205,17 @@ public class HomeFragment extends Fragment {
                 .setDuration(400)        // Duration 300ms
                 .setInterpolator(new DecelerateInterpolator()) // Smooth effect
                 .start();
+
+        // Make outside touchable to dismiss
+        outerFrame.setOnClickListener(v ->
+                content.animate()
+                        .scaleX(0.8f).scaleY(0.8f)  // Shrink
+                        .alpha(0f)                  // Fade out
+                        .setDuration(300)           // Duration 200ms
+                        .setInterpolator(new AccelerateInterpolator()) // Smooth exit
+                        .withEndAction(popupWindow::dismiss) // Dismiss after animation
+                        .start());
+        content.setOnClickListener(v -> {}); // prevent dismiss when clicking inside the content
 
         // load all categories and initialize the ChipGroup
         initChipGroup(popupWindow, popupView, content);
@@ -218,7 +230,7 @@ public class HomeFragment extends Fragment {
 
         // fetch categories
         String userEmail = FirebaseAuthManager.getUserEmail();
-        FirestoreManager.getCategories(userEmail, new FirestoreManager.FirestoreListCallback<Category>() {
+        FirestoreManager.getCategories(userEmail, new FirestoreManager.FirestoreListCallback<Category>() { //todo: use categories from onViewCreated
             @Override
             public void onComplete(List<Category> items) {
                 Set<String> filteredCategoriesIds = getFilteredCategories();
