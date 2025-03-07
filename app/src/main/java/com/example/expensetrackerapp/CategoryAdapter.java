@@ -6,6 +6,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,65 +15,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
+public class CategoryAdapter extends BaseAdapter {
 
     private List<Category> categories;
     private Context context;
-    private OnItemClickListener onItemClickListener;
+    private OnItemClickListener onItemClickListener; //todo: inspect
 
 
     public CategoryAdapter(List<Category> categories, Context context) {
         this.categories = categories;
         this.context = context;
-        this.onItemClickListener = null;
+        this.onItemClickListener = null; //todo: inspect
     }
 
-    public class CategoryViewHolder extends RecyclerView.ViewHolder {
-        TextView categoryNameTV;
-        ImageView categoryImgIV;
-
-        public CategoryViewHolder(View view) {
-            super(view);
-            // Set views data
-            this.categoryNameTV = view.findViewById(R.id.txtCategoryName);
-            this.categoryImgIV = view.findViewById(R.id.imgCategoryIcon);
-
-            // Listener for when the item is clicked - return the position
-            view.setOnClickListener(v -> {
-                if(onItemClickListener != null) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        onItemClickListener.onItemClick(position);
-                    }
-                }
-            });
-        }
-    }
-
-    @NonNull
-    @Override
-    public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.category_grid_item, parent, false);
-        return new CategoryViewHolder(itemView);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
-        Category category = categories.get(position);
-
-        int imgResourceId = getImageResourceId(category.getImgIndexInsideArraysXml(), context);
-        String name = category.getName();
-
-        holder.categoryImgIV.setImageResource(imgResourceId);
-        holder.categoryNameTV.setText(name);
-    }
-
-    @Override
-    public int getItemCount() {
-        return categories.size();
-    }
-
+    //todo: inspect
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
@@ -83,17 +39,50 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     public void addCategory(@NonNull Category category) {
         categories.add(category);
-        notifyItemInserted(categories.size()-1);
+        notifyDataSetChanged();
     }
 
     public void removeCategory(int position) {
         categories.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, categories.size() - position);
+        notifyDataSetChanged();
     }
 
     public void editCategory(int position, Category modifiedCategory) {
         categories.set(position, modifiedCategory);
-        notifyItemChanged(position);
+        notifyDataSetChanged();
     }
+
+    @Override
+    public int getCount() {
+        return categories.size();
+    }
+
+    @Override
+    public Object getItem(int i) {
+        return categories.get(i);
+    }
+
+    @Override
+    public long getItemId(int i) {
+        return i;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.category_grid_item, parent, false);
+        }
+
+        ImageView imgCategoryIcon = convertView.findViewById(R.id.imgCategoryIcon);
+        TextView txtCategoryName = convertView.findViewById(R.id.txtCategoryName);
+
+        int imgIndex = categories.get(position).getImgIndexInsideArraysXml();
+        int imgResource = Helper.getImageResourceId(imgIndex, context);
+
+        imgCategoryIcon.setImageResource(imgResource);
+        txtCategoryName.setText(categories.get(position).getName());
+
+        return convertView;
+    }
+
 }
