@@ -5,13 +5,17 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/light_gray"
+    android:padding="20dp"
     tools:context=".CategoriesFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/fragment_categories_recycler_view"
+    <GridView
+        android:id="@+id/gridViewCategories"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        android:numColumns="2"
+        android:verticalSpacing="20dp"
+        android:horizontalSpacing="5dp"
+        android:gravity="center"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnAddCategory"
