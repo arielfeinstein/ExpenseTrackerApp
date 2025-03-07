@@ -277,6 +277,9 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
         Log.d(TAG, "category set = " + filteredCategoriesIds);
 
         // Determine if the expense should be in the list
+        if (filteredCategoriesIds.isEmpty()) {
+            return isExpenseInRange(expense);
+        }
         return isExpenseInRange(expense) && filteredCategoriesIds.contains(categoryId);
 
     }
