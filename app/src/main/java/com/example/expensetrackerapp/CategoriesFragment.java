@@ -2,6 +2,7 @@ package com.example.expensetrackerapp;
 
 import static android.view.View.VISIBLE;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,19 +22,14 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class CategoriesFragment extends Fragment {
@@ -49,7 +45,7 @@ public class CategoriesFragment extends Fragment {
         super.onCreate(savedInstanceState);
         this.userEmail = FirebaseAuthManager.getUserEmail();
         this.categoryAdapterMutableLiveData = new MutableLiveData<>();
-        FirestoreManager.getCategories(userEmail, new FirestoreManager.FirestoreListCallback<Category>() {
+        FirestoreManager.getCategories(userEmail, new FirestoreManager.FirestoreListCallback<>() {
             @Override
             public void onComplete(List<Category> categories) {
                 categoryAdapterMutableLiveData.postValue(new CategoryAdapter(categories, requireContext()));
@@ -74,15 +70,10 @@ public class CategoriesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        final int GRID_COLUMN_AMOUNT = 2;
-
         // Access views
         GridView gridView = view.findViewById(R.id.gridViewCategories);
         FloatingActionButton addCategoryBtn = view.findViewById(R.id.btnAddCategory);
         View rootView = requireActivity().findViewById(android.R.id.content); // The view of the entire activity
-
-        //Setting recyclerView
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(requireContext().getApplicationContext(), GRID_COLUMN_AMOUNT);
 
         categoryAdapterMutableLiveData.observe(getViewLifecycleOwner(), categoryAdapter -> {
             // retrieving category process is complete.
@@ -91,9 +82,7 @@ public class CategoriesFragment extends Fragment {
             gridView.setAdapter(categoryAdapter);
 
             // Set category item click listener
-            gridView.setOnItemClickListener((parent, itemView, position, id) -> {
-                showPopupWindow(rootView,categoryAdapter,position);
-            });
+            gridView.setOnItemClickListener((parent, itemView, position, id) -> showPopupWindow(rootView,categoryAdapter,position));
 
             // Set add category button click listener
             addCategoryBtn.setOnClickListener(btn -> {
@@ -108,7 +97,7 @@ public class CategoriesFragment extends Fragment {
                                              final int[] imgIndexArr) {
         Context context = requireContext();
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
-        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_icon_selection, null);
+        @SuppressLint("InflateParams") View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_icon_selection, null);
         RecyclerView recyclerView = bottomSheetView.findViewById(R.id.bottom_sheet_icon_selection_recycler_view);
 
         // Setup grid layout for icons
@@ -150,8 +139,8 @@ public class CategoriesFragment extends Fragment {
         boolean isEditing = position != -1;
 
         // Inflate the layout of the popup window
-        View popupView = getLayoutInflater().inflate(R.layout.popup_category, null);
-        FrameLayout outerFrame = popupView.findViewById(R.id.popup_add_expense_outer_frame); //todo: maybe refactor outer_frame to be general
+        @SuppressLint("InflateParams") View popupView = getLayoutInflater().inflate(R.layout.popup_category, null);
+        FrameLayout outerFrame = popupView.findViewById(R.id.popup_add_expense_outer_frame);
         LinearLayout content = popupView.findViewById(R.id.popup_category_content);
 
         // Create the popup window with fixed width for better appearance
@@ -184,28 +173,26 @@ public class CategoriesFragment extends Fragment {
                 .start();
 
         // 3. Add dim effect to background
-        View rootView = getActivity().getWindow().getDecorView().getRootView();
+        View rootView = requireActivity().getWindow().getDecorView().getRootView();
         WindowManager.LayoutParams params = (WindowManager.LayoutParams) rootView.getLayoutParams();
         params.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         params.dimAmount = 0.5f;
-        getActivity().getWindow().setAttributes(params);
+        requireActivity().getWindow().setAttributes(params);
 
         // 4. When popup is dismissed, remove dim effect
         popupWindow.setOnDismissListener(() -> {
             params.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            getActivity().getWindow().setAttributes(params);
+            requireActivity().getWindow().setAttributes(params);
         });
 
         // Make outside touchable to dismiss
-        outerFrame.setOnClickListener(v -> {
-            content.animate()
-                    .scaleX(0.8f).scaleY(0.8f)  // Shrink
-                    .alpha(0f)                  // Fade out
-                    .setDuration(300)           // Duration 200ms
-                    .setInterpolator(new AccelerateInterpolator()) // Smooth exit
-                    .withEndAction(popupWindow::dismiss) // Dismiss after animation
-                    .start();
-        });
+        outerFrame.setOnClickListener(v -> content.animate()
+                .scaleX(0.8f).scaleY(0.8f)  // Shrink
+                .alpha(0f)                  // Fade out
+                .setDuration(300)           // Duration 200ms
+                .setInterpolator(new AccelerateInterpolator()) // Smooth exit
+                .withEndAction(popupWindow::dismiss) // Dismiss after animation
+                .start());
         content.setOnClickListener(v -> {}); // prevent dismiss when clicking inside the content
 
         // Center the popup with slight offset to avoid it feeling static
@@ -237,7 +224,7 @@ public class CategoriesFragment extends Fragment {
         if (isEditing) {
             // Editing currentCategory
             // Set title
-            titleTV.setText("Edit Category");
+            titleTV.setText(R.string.edit_category);
             // Set currentCategory icon
             int imgResourceId = Helper.getImageResourceId(currentCategory.getImgIndexInsideArraysXml(),
                     requireContext());
@@ -245,43 +232,41 @@ public class CategoriesFragment extends Fragment {
             // Set currentCategory name
             nameET.setText(currentCategory.getName());
             // Set ok button text
-            okBtn.setText("Edit");
+            okBtn.setText(R.string.edit);
             // Show remove button
             removeBtn.setVisibility(VISIBLE);
             // Set the icon index of the currentCategory
             imgIndexArr[0] = currentCategory.getImgIndexInsideArraysXml();
 
             // Listener for remove button
-            removeBtn.setOnClickListener(btn -> {
-                FirestoreManager.removeCategory(userEmail, currentCategory.getId(), new FirestoreManager.FirestoreIdCallback() {
-                    @Override
-                    public void onComplete(String id) {
-                        // Successfully removed currentCategory from firestore
-                        categoryAdapter.removeCategory(position);
-                        dismissPopupWithAnimation(popupView, popupWindow);
+            removeBtn.setOnClickListener(btn -> FirestoreManager.removeCategory(userEmail, currentCategory.getId(), new FirestoreManager.FirestoreIdCallback() {
+                @Override
+                public void onComplete(String id) {
+                    // Successfully removed currentCategory from firestore
+                    categoryAdapter.removeCategory(position);
+                    dismissPopupWithAnimation(popupView, popupWindow);
 
-                    }
+                }
 
-                    @Override
-                    public void onFailure(Exception e) {
-                        if (e instanceof ExpenseWithCategoryExistsException) {
-                            // There are expenses that have this currentCategory
-                            String toastMsg = "Failed to remove, There are expenses that have this currentCategory";
-                            Toast.makeText(requireContext(), toastMsg, Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            // Other unexpected error
-                            String toastMsg = "Failed to remove currentCategory, try again later";
-                            Toast.makeText(requireContext(), toastMsg, Toast.LENGTH_SHORT).show();
-                        }
+                @Override
+                public void onFailure(Exception e) {
+                    if (e instanceof ExpenseWithCategoryExistsException) {
+                        // There are expenses that have this currentCategory
+                        String toastMsg = "Failed to remove, There are expenses that have this currentCategory";
+                        Toast.makeText(requireContext(), toastMsg, Toast.LENGTH_SHORT).show();
                     }
-                });
-            });
+                    else {
+                        // Other unexpected error
+                        String toastMsg = "Failed to remove currentCategory, try again later";
+                        Toast.makeText(requireContext(), toastMsg, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }));
         }
         else {
             // Adding currentCategory
             // Set title
-            titleTV.setText("Add Category");
+            titleTV.setText(R.string.add_category);
             // Set currentCategory icon
             int defaultImgIndex = Helper.getDefaultImgIndex(requireContext());
             int imgResourceId = Helper.getImageResourceId(defaultImgIndex,
@@ -296,9 +281,7 @@ public class CategoriesFragment extends Fragment {
         newCategory.setImgIndexInsideArraysXml(imgIndexArr[0]);
 
         // Icon ImageView listener
-        iconIV.setOnClickListener(iconView -> {
-            showIconSelectionBottomSheet(iconIV, newCategory, imgIndexArr);
-        });
+        iconIV.setOnClickListener(iconView -> showIconSelectionBottomSheet(iconIV, newCategory, imgIndexArr));
 
         // Ok button listener (Add currentCategory or edit currentCategory)
         okBtn.setOnClickListener(btn -> {
@@ -371,7 +354,7 @@ public class CategoriesFragment extends Fragment {
                 else {
                     // Adding new expense
                     FirestoreManager.addCategories(userEmail, List.of(newCategory),
-                            new FirestoreManager.FirestoreListCallback<String>() {
+                            new FirestoreManager.FirestoreListCallback<>() {
                                 @Override
                                 public void onComplete(List<String> idList) {
                                     // Successfully added category
