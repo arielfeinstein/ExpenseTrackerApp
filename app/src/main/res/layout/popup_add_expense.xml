@@ -103,17 +103,6 @@
                 android:text="Amount:"
                 android:layout_gravity="center_vertical"/>
 
-            <!--      currently not in use
-                    <com.example.expensetrackerapp.CurrencyEditText
-                        android:id="@+id/popup_add_expense_amount_et"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="40dp"
-                        android:background="@drawable/add_expense_input_background"
-                        android:gravity="center"
-                        android:inputType="numberDecimal" />
-                        -->
-
             <EditText
                 android:id="@+id/popup_add_expense_amount_et"
                 android:layout_width="match_parent"
