@@ -18,6 +18,7 @@
     <string name="date_sample">01/01/2000</string>
     <string name="date_range_sample">01/01/2000 – 01/01/2005</string>
     <string name="amount_sample">50₪</string>
+    <string name="amount_zero_sample">0.00 ₪</string>
     <string name="spent">Spent</string>
     <string name="date_label">Date</string>
     <!-- filter strings -->

@@ -3,17 +3,13 @@ package com.example.expensetrackerapp.Activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-
 import com.example.expensetrackerapp.Fragments.CategoriesFragment;
 import com.example.expensetrackerapp.Fragments.HomeFragment;
 import com.example.expensetrackerapp.Managers.FirebaseAuthManager;
