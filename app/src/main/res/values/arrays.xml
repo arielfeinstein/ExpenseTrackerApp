@@ -6,6 +6,16 @@
         <item>@drawable/ic_food</item>
         <item>@drawable/ic_insurance</item>
         <item>@drawable/ic_communications</item>
+        <item>@drawable/ic_birthday</item>
+        <item>@drawable/ic_friends</item>
+        <item>@drawable/ic_gift</item>
+        <item>@drawable/ic_movies</item>
+        <item>@drawable/ic_shopping</item>
+        <item>@drawable/ic_travel</item>
+        <item>@drawable/ic_party</item>
+        <item>@drawable/ic_vacation</item>
+        <item>@drawable/ic_sports</item>
+        <item>@drawable/ic_billing</item>
 
         <item>@drawable/ic_default_category</item> <!-- default category needs to be the last item -->
     </array>
