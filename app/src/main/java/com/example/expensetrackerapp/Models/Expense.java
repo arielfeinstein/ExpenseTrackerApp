@@ -1,4 +1,4 @@
-package com.example.expensetrackerapp;
+package com.example.expensetrackerapp.Models;
 
 import androidx.annotation.NonNull;
 

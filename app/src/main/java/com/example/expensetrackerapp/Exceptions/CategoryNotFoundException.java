@@ -1,4 +1,4 @@
-package com.example.expensetrackerapp;
+package com.example.expensetrackerapp.Exceptions;
 
 public class CategoryNotFoundException extends RuntimeException {
     public CategoryNotFoundException(String categoryName) {

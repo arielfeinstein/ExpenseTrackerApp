@@ -1,10 +1,16 @@
-package com.example.expensetrackerapp;
+package com.example.expensetrackerapp.Adapters;
 
 import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+import com.example.expensetrackerapp.Fragments.BarChartFragment;
+import com.example.expensetrackerapp.Fragments.PieChartFragment;
+import com.example.expensetrackerapp.Models.Expense;
+import com.example.expensetrackerapp.TimePeriod;
+
 import java.util.List;
 
 public class ChartsPagerAdapter extends FragmentStateAdapter {

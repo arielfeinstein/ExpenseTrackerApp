@@ -1,4 +1,4 @@
-package com.example.expensetrackerapp;
+package com.example.expensetrackerapp.Fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -18,6 +18,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+
+import com.example.expensetrackerapp.Activities.LoginActivity;
+import com.example.expensetrackerapp.Managers.FirebaseAuthManager;
+import com.example.expensetrackerapp.Managers.FirestoreManager;
+import com.example.expensetrackerapp.R;
 
 public class SettingsFragment extends Fragment {
     private Button btnSignOut;

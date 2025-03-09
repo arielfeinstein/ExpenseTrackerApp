@@ -1,8 +1,7 @@
-package com.example.expensetrackerapp;
+package com.example.expensetrackerapp.Activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
@@ -10,6 +9,13 @@ import android.widget.TextView;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+
+import com.example.expensetrackerapp.Fragments.CategoriesFragment;
+import com.example.expensetrackerapp.Fragments.HomeFragment;
+import com.example.expensetrackerapp.Managers.FirebaseAuthManager;
+import com.example.expensetrackerapp.R;
+import com.example.expensetrackerapp.Fragments.SettingsFragment;
+import com.example.expensetrackerapp.Fragments.StatisticsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {

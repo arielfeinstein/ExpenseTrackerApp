@@ -1,4 +1,4 @@
-package com.example.expensetrackerapp;
+package com.example.expensetrackerapp.Managers;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;

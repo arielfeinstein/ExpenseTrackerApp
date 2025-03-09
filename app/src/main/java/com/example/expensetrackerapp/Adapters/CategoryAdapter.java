@@ -1,6 +1,4 @@
-package com.example.expensetrackerapp;
-
-import static com.example.expensetrackerapp.Helper.getImageResourceId;
+package com.example.expensetrackerapp.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,7 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.expensetrackerapp.Helper;
+import com.example.expensetrackerapp.Models.Category;
+import com.example.expensetrackerapp.R;
 
 import java.util.List;
 

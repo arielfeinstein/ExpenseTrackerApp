@@ -1,4 +1,4 @@
-package com.example.expensetrackerapp;
+package com.example.expensetrackerapp.Fragments;
 
 import static android.view.View.VISIBLE;
 
@@ -28,6 +28,16 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.expensetrackerapp.Adapters.CategoryAdapter;
+import com.example.expensetrackerapp.Exceptions.CategoryAlreadyExistsException;
+import com.example.expensetrackerapp.Adapters.CategoryIconAdapter;
+import com.example.expensetrackerapp.Exceptions.ExpenseWithCategoryExistsException;
+import com.example.expensetrackerapp.Helper;
+import com.example.expensetrackerapp.Managers.FirebaseAuthManager;
+import com.example.expensetrackerapp.Managers.FirestoreManager;
+import com.example.expensetrackerapp.Models.Category;
+import com.example.expensetrackerapp.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.List;

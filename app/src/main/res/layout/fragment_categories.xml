@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/light_gray"
     android:padding="20dp"
-    tools:context=".CategoriesFragment">
+    tools:context=".Fragments.CategoriesFragment">
 
     <GridView
         android:id="@+id/gridViewCategories"

@@ -13,13 +13,13 @@
         android:theme="@style/Theme.ExpenseTrackerApp"
         tools:targetApi="31">
         <activity
-            android:name=".GetStartedActivity"
+            android:name=".Activities.GetStartedActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".Activities.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

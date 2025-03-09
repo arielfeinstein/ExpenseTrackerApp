@@ -1,4 +1,4 @@
-package com.example.expensetrackerapp;
+package com.example.expensetrackerapp.Fragments;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +12,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
+
+import com.example.expensetrackerapp.Adapters.ChartsPagerAdapter;
+import com.example.expensetrackerapp.Managers.FirebaseAuthManager;
+import com.example.expensetrackerapp.Managers.FirestoreManager;
+import com.example.expensetrackerapp.Models.Expense;
+import com.example.expensetrackerapp.R;
+import com.example.expensetrackerapp.TimePeriod;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import java.util.Calendar;

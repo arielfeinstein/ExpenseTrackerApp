@@ -1,4 +1,4 @@
-package com.example.expensetrackerapp;
+package com.example.expensetrackerapp.Fragments;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.VISIBLE;
@@ -31,6 +31,14 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.expensetrackerapp.Exceptions.CategoryNotFoundException;
+import com.example.expensetrackerapp.Adapters.ExpenseAdapter;
+import com.example.expensetrackerapp.Managers.FirebaseAuthManager;
+import com.example.expensetrackerapp.Managers.FirestoreManager;
+import com.example.expensetrackerapp.Models.Category;
+import com.example.expensetrackerapp.Models.Expense;
+import com.example.expensetrackerapp.R;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.datepicker.MaterialDatePicker;

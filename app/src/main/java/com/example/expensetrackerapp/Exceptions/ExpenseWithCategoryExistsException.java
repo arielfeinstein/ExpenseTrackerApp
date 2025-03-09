@@ -1,4 +1,4 @@
-package com.example.expensetrackerapp;
+package com.example.expensetrackerapp.Exceptions;
 
 public class ExpenseWithCategoryExistsException extends RuntimeException {
     public ExpenseWithCategoryExistsException(String message) {

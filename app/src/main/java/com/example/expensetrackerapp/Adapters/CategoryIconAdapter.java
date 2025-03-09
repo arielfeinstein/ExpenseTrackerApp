@@ -1,4 +1,4 @@
-package com.example.expensetrackerapp;
+package com.example.expensetrackerapp.Adapters;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -10,6 +10,10 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.expensetrackerapp.Helper;
+import com.example.expensetrackerapp.OnItemClickListener;
+import com.example.expensetrackerapp.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -108,3 +112,4 @@ public class CategoryIconAdapter extends RecyclerView.Adapter<CategoryIconAdapte
         return categoryIconIndexesList;
     }
 }
+

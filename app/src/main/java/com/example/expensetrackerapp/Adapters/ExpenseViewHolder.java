@@ -1,9 +1,11 @@
-package com.example.expensetrackerapp;
+package com.example.expensetrackerapp.Adapters;
 
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.expensetrackerapp.R;
 
 public class ExpenseViewHolder extends RecyclerView.ViewHolder {
     private final TextView expenseDescriptionTV, dateTV, amountTV;

@@ -1,6 +1,12 @@
-package com.example.expensetrackerapp;
+package com.example.expensetrackerapp.Managers;
 
 import android.util.Log;
+
+import com.example.expensetrackerapp.Exceptions.CategoryAlreadyExistsException;
+import com.example.expensetrackerapp.Exceptions.CategoryNotFoundException;
+import com.example.expensetrackerapp.Exceptions.ExpenseWithCategoryExistsException;
+import com.example.expensetrackerapp.Models.Category;
+import com.example.expensetrackerapp.Models.Expense;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;

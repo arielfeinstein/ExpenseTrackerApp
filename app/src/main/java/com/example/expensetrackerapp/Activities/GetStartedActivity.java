@@ -1,9 +1,11 @@
-package com.example.expensetrackerapp;
+package com.example.expensetrackerapp.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.expensetrackerapp.R;
 
 public class GetStartedActivity extends AppCompatActivity {
 
