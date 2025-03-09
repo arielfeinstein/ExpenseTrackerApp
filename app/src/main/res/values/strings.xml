@@ -33,4 +33,8 @@
     <string name="no_expenses">You don\'t have any expenses!</string>
     <!-- categories strings -->
     <string name="category_name">Food</string>
+    <!-- popup strings -->
+    <string name="edit_category">Edit Category</string>
+    <string name="add_category">Add Category</string>
+    <string name="edit">Edit</string>
 </resources>
