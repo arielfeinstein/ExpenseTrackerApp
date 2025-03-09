@@ -88,7 +88,7 @@ public class HomeFragment extends Fragment {
                 expenseAdapter, true);
 
         // categories
-        FirestoreManager.getCategories(userEmail, new FirestoreManager.FirestoreListCallback<Category>() {
+        FirestoreManager.getCategories(userEmail, new FirestoreManager.FirestoreListCallback<>() {
             @Override
             public void onComplete(List<Category> items) {
                 categoriesLiveData.postValue(items);
@@ -145,12 +145,10 @@ public class HomeFragment extends Fragment {
             setTotalAmountToTV(expenseAdapter.getTotalExpensesAmount(), totalAmountTV);
 
             // Set total expense amount listener
-            expenseAdapter.setOnAmountListener(totalAmount ->
-                setTotalAmountToTV(totalAmount, totalAmountTV));
+            expenseAdapter.setOnAmountListener(totalAmount -> setTotalAmountToTV(totalAmount, totalAmountTV));
 
             // select custom date listener
-            selectCustomDateLinearLayout.setOnClickListener(v ->
-                showDateRangePicker(selectedDatesTextView, expenseAdapter));
+            selectCustomDateLinearLayout.setOnClickListener(v -> showDateRangePicker(selectedDatesTextView, expenseAdapter));
 
             // observe category list
             categoriesLiveData.observe(getViewLifecycleOwner(), categories -> {
@@ -328,10 +326,6 @@ public class HomeFragment extends Fragment {
             setEndOfDay(endCal);
             endDate = endCal.getTime(); // endDate is now the end of the day.
 
-            // save dates
-            this.startingDate = startDate;
-            this.endingDate = endDate;
-
             // Update the expenses list
             updateRecyclerList(startDate, endDate, expenseAdapter, false);
 
@@ -454,7 +448,7 @@ public class HomeFragment extends Fragment {
 
         // Make outside touchable to dismiss
         outerFrame.setOnClickListener(v ->
-            content.animate()
+                content.animate()
                     .scaleX(0.8f).scaleY(0.8f)  // Shrink
                     .alpha(0f)                  // Fade out
                     .setDuration(300)           // Duration 200ms

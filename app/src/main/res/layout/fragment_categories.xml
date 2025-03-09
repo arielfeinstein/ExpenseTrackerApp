@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/light_gray"
+    android:padding="20dp"
     tools:context=".CategoriesFragment">
 
     <GridView
@@ -12,9 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:numColumns="2"
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
-        android:stretchMode="columnWidth"
+        android:verticalSpacing="20dp"
+        android:horizontalSpacing="5dp"
         android:gravity="center"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
