@@ -42,6 +42,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -123,7 +124,7 @@ public class HomeFragment extends Fragment {
 
         // add custom item divider to the recycler view
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
-        dividerItemDecoration.setDrawable(ContextCompat.getDrawable(context, R.drawable.recycler_item_divider));
+        dividerItemDecoration.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(context, R.drawable.recycler_item_divider)));
         recyclerView.addItemDecoration(dividerItemDecoration);
         
         // Set selectedDatesTextView to the current range
@@ -258,7 +259,7 @@ public class HomeFragment extends Fragment {
         btnShowResults.setOnClickListener(v -> {
             Set<String> categoriesIds = getFilteredCategories();
             if (!categoriesIds.isEmpty()) {
-                FirestoreManager.getExpenses(userEmail, new ArrayList<>(categoriesIds), startingDate, endingDate, new FirestoreManager.FirestoreListCallback<Expense>() {
+                FirestoreManager.getExpenses(userEmail, new ArrayList<>(categoriesIds), startingDate, endingDate, new FirestoreManager.FirestoreListCallback<>() {
                     @Override
                     public void onComplete(List<Expense> items) {
                         expenseAdapter.replaceExpenseList(items, startingDate, endingDate);
@@ -271,7 +272,7 @@ public class HomeFragment extends Fragment {
                 });
             } else {
                 // no categories to filter by - fetch all expenses
-                FirestoreManager.getExpenses(userEmail, startingDate, endingDate, new FirestoreManager.FirestoreListCallback<Expense>() {
+                FirestoreManager.getExpenses(userEmail, startingDate, endingDate, new FirestoreManager.FirestoreListCallback<>() {
                     @Override
                     public void onComplete(List<Expense> items) {
                         expenseAdapter.replaceExpenseList(items, startingDate, endingDate);
@@ -356,7 +357,8 @@ public class HomeFragment extends Fragment {
         Set<String> filteredCategoriesIds = getFilteredCategories();
 
         if (!filteredCategoriesIds.isEmpty()) {
-            FirestoreManager.getExpenses(userEmail, new ArrayList<>(filteredCategoriesIds), startingDate, endingDate, new FirestoreManager.FirestoreListCallback<Expense>() {
+            FirestoreManager.getExpenses(userEmail, new ArrayList<>(filteredCategoriesIds), startingDate, endingDate, new FirestoreManager.FirestoreListCallback<
+                    >() {
                 @Override
                 public void onComplete(List<Expense> items) {
                     expenseAdapter.replaceExpenseList(items, startingDate, endingDate);
@@ -370,7 +372,8 @@ public class HomeFragment extends Fragment {
             });
         } else {
             // no categories to filter by - fetch all expenses
-            FirestoreManager.getExpenses(userEmail, startingDate, endingDate, new FirestoreManager.FirestoreListCallback<Expense>() {
+            FirestoreManager.getExpenses(userEmail, startingDate, endingDate, new FirestoreManager.FirestoreListCallback<
+                    >() {
                 @Override
                 public void onComplete(List<Expense> items) {
                     expenseAdapter.replaceExpenseList(items, startingDate, endingDate);
@@ -434,16 +437,16 @@ public class HomeFragment extends Fragment {
                 .start();
 
         // 3. Add dim effect to background
-        View rootView = getActivity().getWindow().getDecorView().getRootView();
+        View rootView = requireActivity().getWindow().getDecorView().getRootView();
         WindowManager.LayoutParams params = (WindowManager.LayoutParams) rootView.getLayoutParams();
         params.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         params.dimAmount = 0.5f;
-        getActivity().getWindow().setAttributes(params);
+        requireActivity().getWindow().setAttributes(params);
 
         // 4. When popup is dismissed, remove dim effect
         popupWindow.setOnDismissListener(() -> {
             params.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            getActivity().getWindow().setAttributes(params);
+            requireActivity().getWindow().setAttributes(params);
         });
 
         // Make outside touchable to dismiss
