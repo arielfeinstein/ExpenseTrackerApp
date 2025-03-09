@@ -1,8 +1,6 @@
 package com.example.expensetrackerapp;
 
 import android.util.Log;
-import android.widget.Toast;
-
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
@@ -11,8 +9,6 @@ import com.google.firebase.firestore.*;
 import java.util.*;
 
 public final class FirestoreManager {
-
-    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     // Collection names
     private static final String USERS_COLLECTION = "users";
@@ -42,11 +38,6 @@ public final class FirestoreManager {
         void onFailure(Exception e);
     }
 
-    public interface FirestoreSnapshotCallback {
-        void onComplete(QuerySnapshot querySnapshot);
-        void onFailure(Exception e);
-    }
-
     // ===================== Expenses =====================
 
     /**
@@ -69,6 +60,7 @@ public final class FirestoreManager {
         data.put(CATEGORY_ID_FIELD, categoryId);
 
         // add the data to the collection
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(USERS_COLLECTION)
                 .document(userEmail)
                 .collection(EXPENSES_SUBCOLLECTION)
@@ -103,14 +95,13 @@ public final class FirestoreManager {
      * @param callback A FirestoreIdCallback to handle success or failure.
      *                 - On success, the expenseId will be passed via onComplete.
      *                 - On failure, the error will be passed via onFailure.
-     *
      * Functionality:
      * - Deletes a document with the specified expenseId from the "expenses" subcollection under the user's document.
      * - Reports the result of the deletion operation via the provided callback.
      */
     public static void removeExpense(String userEmail, String expenseId, FirestoreIdCallback callback) {
         Log.d("FirestoreManager", "Removing expense with ID: " + expenseId + " for user: " + userEmail);
-
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(USERS_COLLECTION)
                 .document(userEmail)
                 .collection(EXPENSES_SUBCOLLECTION)
@@ -137,7 +128,6 @@ public final class FirestoreManager {
      * @param callback         A FirestoreIdCallback to handle the success or failure of the operation.
      *                         On success, the ID of the updated document is returned via onComplete.
      *                         On failure, the exception is passed via onFailure.
-     *
      * Functionality:
      * - Updates the data of an existing document with the specified expenseId in the "expenses" subcollection.
      * - Uses a map with the fields of Expense but with only the name of the category (category id) instead of the whole object
@@ -149,9 +139,9 @@ public final class FirestoreManager {
         data.put(AMOUNT_FIELD,modifiedExpense.getAmount());
         data.put(CATEGORY_ID_FIELD,modifiedExpense.getCategory().getId());
         data.put(TRANSACTION_DATE_FIELD,modifiedExpense.getTransactionDate());
-        data.put(TRANSACTION_DATE_FIELD,modifiedExpense.getTransactionDate());
         data.put(DESCRIPTION_FIELD,modifiedExpense.getDescription());
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(USERS_COLLECTION)
                 .document(userEmail)
                 .collection(EXPENSES_SUBCOLLECTION)
@@ -177,7 +167,7 @@ public final class FirestoreManager {
      */
     public static void getExpenses(String userEmail, FirestoreListCallback<Expense> callback) {
         // Step 1: Get all categories for the user
-        getCategories(userEmail, new FirestoreListCallback<Category>() {
+        getCategories(userEmail, new FirestoreListCallback<>() {
             @Override
             public void onComplete(List<Category> categories) {
                 Log.d("GetAllExpenses", "Fetched " + categories.size() + " categories.");
@@ -189,7 +179,7 @@ public final class FirestoreManager {
                 }
 
                 // Step 2: Get the transaction date range (oldest and newest dates)
-                getTransactionDateRange(userEmail, new FirestoreListCallback<Date>() {
+                getTransactionDateRange(userEmail, new FirestoreListCallback<>() {
                     @Override
                     public void onComplete(List<Date> dateRange) {
                         if (dateRange.isEmpty() || dateRange.size() < 2) {
@@ -204,7 +194,7 @@ public final class FirestoreManager {
                         Log.d("GetAllExpenses", "Transaction date range: From " + startingDate + " to " + endingDate);
 
                         // Step 3: Get all expenses for the user within the date range and categories
-                        getExpenses(userEmail, categoryIds, startingDate, endingDate, new FirestoreListCallback<Expense>() {
+                        getExpenses(userEmail, categoryIds, startingDate, endingDate, new FirestoreListCallback<>() {
                             @Override
                             public void onComplete(List<Expense> expenses) {
                                 Log.d("GetAllExpenses", "Fetched " + expenses.size() + " expenses.");
@@ -245,7 +235,7 @@ public final class FirestoreManager {
      */
     public static void getExpenses(String userEmail, List<String> categoryIds, FirestoreListCallback<Expense> callback) {
         // Step 1: Get the transaction date range (oldest and newest dates)
-        getTransactionDateRange(userEmail, new FirestoreListCallback<Date>() {
+        getTransactionDateRange(userEmail, new FirestoreListCallback<>() {
             @Override
             public void onComplete(List<Date> dateRange) {
                 if (dateRange.isEmpty() || dateRange.size() < 2) {
@@ -260,7 +250,7 @@ public final class FirestoreManager {
                 Log.d("GetExpenses", "Transaction date range: From " + startingDate + " to " + endingDate);
 
                 // Step 2: Fetch all expenses filtered by the provided category IDs within the date range
-                getExpenses(userEmail, categoryIds, startingDate, endingDate, new FirestoreListCallback<Expense>() {
+                getExpenses(userEmail, categoryIds, startingDate, endingDate, new FirestoreListCallback<>() {
                     @Override
                     public void onComplete(List<Expense> expenses) {
                         Log.d("GetExpenses", "Fetched " + expenses.size() + " expenses.");
@@ -295,7 +285,7 @@ public final class FirestoreManager {
      */
     public static void getExpenses(String userEmail, Date startingDate, Date endingDate, FirestoreListCallback<Expense> callback) {
         // Step 1: Get all categories for the user
-        getCategories(userEmail, new FirestoreListCallback<Category>() {
+        getCategories(userEmail, new FirestoreListCallback<>() {
             @Override
             public void onComplete(List<Category> categories) {
                 Log.d("GetExpenses", "Fetched " + categories.size() + " categories.");
@@ -307,7 +297,7 @@ public final class FirestoreManager {
                 }
 
                 // Step 2: Get all expenses for the user within the date range and categories
-                getExpenses(userEmail, categoryIds, startingDate, endingDate, new FirestoreListCallback<Expense>() {
+                getExpenses(userEmail, categoryIds, startingDate, endingDate, new FirestoreListCallback<>() {
                     @Override
                     public void onComplete(List<Expense> expenses) {
                         Log.d("GetExpenses", "Fetched " + expenses.size() + " expenses.");
@@ -346,6 +336,7 @@ public final class FirestoreManager {
         Log.d("GetExpenses", "Fetching expenses for user: " + userEmail + ", categories: " + categoryIds + ", from: " + startingDate + ", to: " + endingDate);
 
         // Query Firestore to get all expense documents for the specified categories and date range
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(USERS_COLLECTION)
                 .document(userEmail)
                 .collection(EXPENSES_SUBCOLLECTION)
@@ -359,7 +350,8 @@ public final class FirestoreManager {
                     List<DocumentSnapshot> expenseDocuments = querySnapshot.getDocuments();
 
                     // Use the getCategories method to fetch corresponding categories
-                    getCategories(userEmail, expenseDocuments, new FirestoreListCallback<Category>() {
+                    getCategories(userEmail, expenseDocuments, new FirestoreListCallback<
+                            >() {
                         @Override
                         public void onComplete(List<Category> categories) {
                             Log.d("GetExpenses", "Fetched " + categories.size() + " categories.");
@@ -377,11 +369,19 @@ public final class FirestoreManager {
                                     continue;
                                 }
 
+                                //Get data
+                                Double amount = (Double) data.get(AMOUNT_FIELD);
+                                Timestamp timestampTransaction = (Timestamp) data.get(TRANSACTION_DATE_FIELD);
+                                if (amount == null || timestampTransaction == null) {
+                                    Log.d("GetExpenses", "AMOUNT_FIELD OR TRANSACTION_DATE_FIELD is null");
+                                    return;
+                                }
+
                                 // Construct the Expense object
                                 Expense expense = new Expense();
                                 expense.setId((String) data.get("id"));
-                                expense.setAmount((Double) data.get(AMOUNT_FIELD));
-                                expense.setTransactionDate(((Timestamp) data.get(TRANSACTION_DATE_FIELD)).toDate());
+                                expense.setAmount(amount);
+                                expense.setTransactionDate(timestampTransaction.toDate());
                                 expense.setDescription((String) data.get(DESCRIPTION_FIELD));
                                 expense.setCategory(category);
 
@@ -411,21 +411,6 @@ public final class FirestoreManager {
                 });
     }
 
-
-    // TODO: inspect
-    public static ListenerRegistration attachExpensesListener(String userEmail, FirestoreSnapshotCallback callback) {
-        return db.collection(USERS_COLLECTION)
-                .document(userEmail)
-                .collection(EXPENSES_SUBCOLLECTION)
-                .addSnapshotListener((querySnapshot, e) -> {
-                    if (e != null) {
-                        if (callback != null) callback.onFailure(e);
-                        return;
-                    }
-                    if (callback != null) callback.onComplete(querySnapshot);
-                });
-    }
-
     /**
      * Retrieves the date of the first and last expense transactions for a specific user.
      * The returned list contains two dates: the first (oldest) transaction date and the last (newest) transaction date.
@@ -434,6 +419,7 @@ public final class FirestoreManager {
      * @param callback the callback to handle the list containing the first and last dates or an error
      */
     private static void getTransactionDateRange(String userEmail, FirestoreListCallback<Date> callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(USERS_COLLECTION)
                 .document(userEmail)
                 .collection(EXPENSES_SUBCOLLECTION)
@@ -496,6 +482,7 @@ public final class FirestoreManager {
     }
 
     public static void deleteAllExpenses(String userEmail) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference expensesCollectionRef = db.collection(USERS_COLLECTION)
                 .document(userEmail)
                 .collection(EXPENSES_SUBCOLLECTION);
@@ -520,77 +507,8 @@ public final class FirestoreManager {
 
     // ===================== Categories =====================
 
-
-    /**
-     * Adds a new category to the "categories" subcollection under the specified user's document in Firestore.
-     *
-     * Steps:
-     * 1. Checks if a category with the same name already exists in the user's "categories" subcollection.
-     *    - If such a category exists, the method does not add it and triggers an exception through the callback.
-     * 2. If no category with the same name exists:
-     *    - Adds the new category with an auto-generated Firestore document ID.
-     *    - Updates the category object and the Firestore document with the assigned ID.
-     *
-     * @param userEmail The email of the user under whose document the category will be added.
-     * @param category The Category object to be added, which must have a name field set.
-     * @param callback The FirestoreIdCallback to handle success or failure events. On success, it provides the generated document ID.
-     */
-    //todo: consider removing and only using addCategories
-    public static void addCategory(String userEmail, Category category, FirestoreIdCallback callback) {
-        Log.d("addCategory", "Adding category: " + category.getName() + " for user: " + userEmail);
-        // Reference to the categories subcollection
-        CollectionReference categoriesRef = db.collection(USERS_COLLECTION)
-                .document(userEmail)
-                .collection(CATEGORIES_SUBCOLLECTION);
-
-        // Query to check if a category with the same name already exists
-        categoriesRef.whereEqualTo("name", category.getName())
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    if (!querySnapshot.isEmpty()) {
-                        // Category already exists - don't add
-                        Log.w("addCategory", "Category already exists: " + category.getName());
-                        if (callback != null)
-                            callback.onFailure(new CategoryAlreadyExistsException(category.getName()));
-                    } else {
-                        // Category doesn't exist - add with auto-generated ID
-                        categoriesRef.add(category)
-                                .addOnSuccessListener(documentReference -> {
-                                    // Set the Firestore-assigned ID to the category object
-                                    Log.d("addCategory", "Category added successfully with document ID: " + documentReference.getId());
-                                    String generatedId = documentReference.getId();
-                                    category.setId(generatedId);
-
-                                    // Update the document with the assigned ID
-                                    documentReference.update("id", generatedId)
-                                            .addOnSuccessListener(aVoid -> {
-                                                if (callback != null)
-                                                    callback.onComplete(generatedId);
-                                                Log.d("addCategory", "Updated category document with ID: " + generatedId);
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                if (callback != null)
-                                                    callback.onFailure(e); // Failed to update the document with ID
-                                                Log.e("FirestoreManager", "Failed to update category document with ID: " + e.getMessage(), e);
-                                            });
-                                })
-                                .addOnFailureListener(e -> {
-                                    if (callback != null)
-                                        callback.onFailure(e);
-                                    Log.e("addCategory", "Failed to add category: " + e.getMessage(), e);
-                                });
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("addCategory", "Failed to query category name", e);
-                    if (callback != null)
-                        callback.onFailure(e); // Failed to query category name
-                });
-    }
-
     /**
      * Adds multiple categories to the "categories" subcollection under the specified user's document in Firestore.
-     *
      * Steps:
      * 1. For each category in the list:
      *    - Checks if a category with the same name already exists in the user's "categories" subcollection.
@@ -607,6 +525,7 @@ public final class FirestoreManager {
         Log.d("addCategories", "Adding " + categories.size() + " categories for user: " + userEmail);
 
         // Reference to the categories subcollection
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference categoriesRef = db.collection(USERS_COLLECTION)
                 .document(userEmail)
                 .collection(CATEGORIES_SUBCOLLECTION);
@@ -697,7 +616,6 @@ public final class FirestoreManager {
 
     /**
      * Removes a specified category from the Firestore database.
-     *
      * This method performs the following steps:
      * 1. Queries the "expenses" subcollection to check if there are any expenses associated with the given categoryId.
      *    - If there are expenses, it cannot remove the category and triggers the exception via the callback:
@@ -713,6 +631,7 @@ public final class FirestoreManager {
      */
     public static void removeCategory(String userEmail, String categoryId, FirestoreIdCallback callback) {
         // Query Firestore to check if there are any expenses with the given category ID
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(USERS_COLLECTION)
                 .document(userEmail)
                 .collection(EXPENSES_SUBCOLLECTION)
@@ -751,7 +670,6 @@ public final class FirestoreManager {
 
     /**
      * Modifies an existing category's details in the Firestore database.
-     *
      * This method performs the following steps:
      * 1. Checks if a category with the same name (as the modified category) already exists in the user's "categories" subcollection.
      *    - If a category with the same name exists (excluding the current category), the operation is aborted, and an exception is triggered through the callback.
@@ -767,6 +685,7 @@ public final class FirestoreManager {
      */
     public static void editCategory(String userEmail, String categoryId, Category modifiedCategory, FirestoreIdCallback callback) {
         // Check modifiedCategory.name doesn't exist
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference categoryCollectionRef = db.collection(USERS_COLLECTION).document(userEmail)
                 .collection(CATEGORIES_SUBCOLLECTION);
         categoryCollectionRef.whereEqualTo(NAME_FIELD, modifiedCategory.getName()).get()
@@ -811,6 +730,7 @@ public final class FirestoreManager {
      * @param callback for result operation
      */
     public static void editCategoryIconIndex(String userEmail, String categoryId, int iconIndex, FirestoreIdCallback callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference categoryDocumentRef =
                 db.collection(USERS_COLLECTION)
                 .document(userEmail).
@@ -842,6 +762,7 @@ public final class FirestoreManager {
      *                  - onFailure: Called with an exception if the operation fails.
      */
     public static void getCategories(String userEmail, FirestoreListCallback<Category> callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(USERS_COLLECTION)
                 .document(userEmail)
                 .collection(CATEGORIES_SUBCOLLECTION)
@@ -877,11 +798,19 @@ public final class FirestoreManager {
             final int index = i; // Capture the index for order preservation
             DocumentSnapshot document = documents.get(i);
 
+            // Get category id
+            String categoryId = document.getString(CATEGORY_ID_FIELD);
+            if (categoryId == null) {
+                Log.e("getCategories", "category id is null", new NullPointerException());
+                return;
+            }
+
             // Create a task to fetch the category for the current document
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
             Task<Category> categoryTask = db.collection(USERS_COLLECTION)
                     .document(userEmail)
                     .collection(CATEGORIES_SUBCOLLECTION)
-                    .document(document.getString(CATEGORY_ID_FIELD)) // Assuming expense's category ID corresponds to category document ID
+                    .document(categoryId) // Assuming expense's category ID corresponds to category document ID
                     .get()
                     .continueWith(task -> {
                         Log.d("getCategories", "Fetching category for document: " + document.getId());
@@ -928,7 +857,7 @@ public final class FirestoreManager {
 
         List<Category> categories = Arrays.asList(utilities, transportation, food, insurance, communications);
 
-        addCategories(userEmail, categories, new FirestoreListCallback<String>() {
+        addCategories(userEmail, categories, new FirestoreListCallback<>() {
             @Override
             public void onComplete(List<String> successfullyAddedIds) {
                 if (callback != null) {
@@ -944,19 +873,5 @@ public final class FirestoreManager {
             }
         });
 
-    }
-
-    //TODO: inspect
-    public static ListenerRegistration attachCategoriesListener(String userEmail, FirestoreSnapshotCallback callback) {
-        return db.collection(USERS_COLLECTION)
-                .document(userEmail)
-                .collection(CATEGORIES_SUBCOLLECTION)
-                .addSnapshotListener((querySnapshot, e) -> {
-                    if (e != null) {
-                        if (callback != null) callback.onFailure(e);
-                        return;
-                    }
-                    if (callback != null) callback.onComplete(querySnapshot);
-                });
     }
 }
