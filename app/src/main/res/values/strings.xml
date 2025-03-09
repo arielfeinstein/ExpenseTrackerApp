@@ -37,4 +37,14 @@
     <string name="edit_category">Edit Category</string>
     <string name="add_category">Add Category</string>
     <string name="edit">Edit</string>
+    <string name="date">Date:</string>
+    <string name="description">Description:</string>
+    <string name="category">Category:</string>
+    <string name="amount">Amount:</string>
+    <string name="category_edit_text">category</string>
+    <string name="description_edit_text">description</string>
+    <string name="amount_edit_text">amount</string>
+    <string name="add">Add</string>
+    <string name="remove">Remove</string>
+    <string name="new_expense">New Expense</string>
 </resources>
