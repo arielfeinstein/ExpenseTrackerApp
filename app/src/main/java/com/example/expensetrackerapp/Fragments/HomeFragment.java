@@ -1,6 +1,7 @@
 package com.example.expensetrackerapp.Fragments;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -21,6 +22,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -129,6 +131,11 @@ public class HomeFragment extends Fragment {
         TextView totalAmountTV = view.findViewById(R.id.fragment_home_amount_tv);
         View rootView = requireActivity().findViewById(android.R.id.content); // The view of the entire activity
         View btnFilter = view.findViewById(R.id.btnFilter);
+        ProgressBar progressBar = view.findViewById(R.id.homeProgressBar);
+
+        // show progress bar
+        progressBar.setVisibility(VISIBLE);
+        recyclerView.setVisibility(GONE);
 
         // add custom item divider to the recycler view
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
@@ -149,6 +156,10 @@ public class HomeFragment extends Fragment {
             recyclerView.setLayoutManager(layoutManager);
             // Set adapter
             recyclerView.setAdapter(expenseAdapter);
+
+            // hide progress bar
+            progressBar.setVisibility(GONE);
+            recyclerView.setVisibility(VISIBLE);
 
             // Set total expenses amount for the first time
             setTotalAmountToTV(expenseAdapter.getTotalExpensesAmount(), totalAmountTV);
@@ -544,7 +555,7 @@ public class HomeFragment extends Fragment {
             // Setup for adding
             titleTextView.setText("New Expense");
             actionButton.setText("Add Expense");
-            removeExpenseBtn.setVisibility(View.GONE);
+            removeExpenseBtn.setVisibility(GONE);
 
             // Set initial date
             Calendar calendar = Calendar.getInstance(Locale.US);
