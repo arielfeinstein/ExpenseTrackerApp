@@ -55,7 +55,7 @@ public class Helper {
         catch (Exception e) {
             Log.e("Helper", "getDefaultImgIndex: failed to retrieve image_array", e);
         }
-        return -1;
+        return imgIndex;
     }
 
 
