@@ -113,6 +113,14 @@ public class StatisticsFragment extends Fragment {
         });
     }
 
+    /**
+     * Unselects all the time period buttons (Weekly, Monthly, Yearly) by setting their background to the unselected state.
+     * This method finds the buttons representing different time periods (Weekly, Monthly, Yearly) within the provided view
+     * and changes their background to visually indicate that they are not currently selected. This is typically used
+     * to clear the selection state before a new button is selected.
+     *
+     * @param view The root View containing the time period buttons. This is used to find the buttons by their IDs.
+     */
     private void unselectButtons(View view) {
         Button btnWeekly = view.findViewById(R.id.btn_weekly);
         Button btnMonthly = view.findViewById(R.id.btn_monthly);
