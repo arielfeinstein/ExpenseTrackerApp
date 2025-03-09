@@ -19,7 +19,7 @@
             android:id="@+id/toolbar_title_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="My Expenses"
+            android:text="@string/my_expenses"
             android:textSize="22sp"
             android:textColor="@android:color/white"
             android:layout_gravity="center" />
