@@ -26,6 +26,9 @@
             android:layout_height="wrap_content"
             android:text="Expense Description"
             android:textColor="@color/black"
+            android:minLines="1"
+            android:maxLines="3"
+            android:ellipsize="end"
             android:gravity="center"/>
 
         <TextView

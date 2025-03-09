@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -65,32 +67,45 @@ public class PieChartFragment extends Fragment {
             entries.add(new PieEntry((float) amount, entry.getKey().getName()));
         }
 
-        PieDataSet dataSet = new PieDataSet(entries, "Expense Categories");
+        PieDataSet dataSet = new PieDataSet(entries, "");
         List<Integer> colors = generateColors(entries.size());
         dataSet.setColors(colors);
         dataSet.setValueTextSize(14f);
         dataSet.setValueTextColor(Color.BLACK);
+        dataSet.setDrawValues(false); // Hide values on the pie slices
 
         pieChart.getDescription().setEnabled(false);
-        pieChart.getLegend().setEnabled(false);
+        Legend legend = pieChart.getLegend();
+        legend.setEnabled(true);
+        legend.setTextSize(16f);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        legend.setWordWrapEnabled(true); // Enable wrapping
+        legend.setMaxSizePercent(0.5f); // Adjust width to fit 2 items per row
+
+        // Modify labels to include values
+        List<String> legendLabels = new ArrayList<>();
+        for (PieEntry entry : entries) {
+            legendLabels.add(entry.getLabel() + " " + entry.getValue() + "₪");
+        }
+
+        // Assign custom labels to legend
+        LegendEntry[] legendEntries = new LegendEntry[entries.size()];
+        for (int i = 0; i < entries.size(); i++) {
+            LegendEntry legendEntry = new LegendEntry();
+            legendEntry.label = legendLabels.get(i);
+            legendEntry.formColor = colors.get(i);
+            legendEntries[i] = legendEntry;
+        }
+
+        legend.setCustom(legendEntries);
+
         pieChart.setRotationEnabled(false);
         pieChart.setHoleRadius(10f);
         pieChart.setTransparentCircleRadius(2f);
-        pieChart.setEntryLabelColor(Color.BLACK);
+        pieChart.setDrawEntryLabels(false);
         // Disable highlighting of slices when tapped
         pieChart.setTouchEnabled(false);
-
-        // Create a custom ValueFormatter to add the dollar sign
-        ValueFormatter ILSFormatter = new ValueFormatter() {
-            @SuppressLint("DefaultLocale")
-            @Override
-            public String getFormattedValue(float value) {
-                // Format the value with a dollar sign
-                return String.format("%.2f", value) + "₪"; // You can adjust the decimal places as needed
-            }
-        };
-
-        dataSet.setValueFormatter(ILSFormatter);
 
         return new PieData(dataSet);
     }

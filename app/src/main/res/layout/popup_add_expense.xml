@@ -66,9 +66,13 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/edit_text_input_background"
                 android:gravity="center"
+                android:padding="10dp"
                 android:hint="@string/description_edit_text"
-                android:inputType="text"
+                android:inputType="textMultiLine"
                 android:minHeight="48dp"
+                android:minLines="1"
+                android:maxLines="5"
+                android:scrollbars="vertical"
                 tools:ignore="Autofill" />
         </LinearLayout>
 
