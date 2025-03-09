@@ -99,8 +99,6 @@ public class LoginActivity extends AppCompatActivity {
             public void handleOnBackPressed() {
                 if (inRegisterMode) {
                     resetToLoginMode();
-                } else {
-                    finish(); // Default back press behavior
                 }
             }
         });

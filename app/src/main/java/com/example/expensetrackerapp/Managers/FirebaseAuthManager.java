@@ -50,7 +50,7 @@ public class FirebaseAuthManager {
         auth.signOut();
     }
 
-    public static String isLoggedIn() {
+    public static String getUserId() {
         FirebaseUser user = auth.getCurrentUser();
         if (user != null) {
             return user.getUid();

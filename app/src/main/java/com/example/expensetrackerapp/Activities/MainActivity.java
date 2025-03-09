@@ -3,9 +3,13 @@ package com.example.expensetrackerapp.Activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -27,11 +31,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // check if any user is authenticated
-        String userID = FirebaseAuthManager.isLoggedIn();
+        String userID = FirebaseAuthManager.getUserId();
         if (userID == null) {
             // no user authenticated - start GetStartedActivity
             Intent intent = new Intent(this, GetStartedActivity.class);
             startActivity(intent);
+            return;
         }
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
@@ -84,5 +89,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
+        // Handle back press
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+
+            }
+        });
     }
 }
