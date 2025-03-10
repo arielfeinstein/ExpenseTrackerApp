@@ -18,8 +18,8 @@ import java.util.List;
 
 public class CategoryAdapter extends BaseAdapter {
 
-    private List<Category> categories;
-    private Context context;
+    private final List<Category> categories;
+    private final Context context;
 
 
     public CategoryAdapter(List<Category> categories, Context context) {

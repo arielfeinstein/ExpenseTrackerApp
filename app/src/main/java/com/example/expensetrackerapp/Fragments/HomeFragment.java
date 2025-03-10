@@ -200,6 +200,9 @@ public class HomeFragment extends Fragment {
         editor.apply();
     }
 
+    /**
+     * show the popup window that allow the user to filter expenses by categories
+     */
     private void showFilterPopup(View view, List<Category> categories) {
         // Inflate the layout of the popup window
         @SuppressLint("InflateParams")
@@ -243,6 +246,9 @@ public class HomeFragment extends Fragment {
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
     }
 
+    /**
+     * initialize the ChipGroup of the possible categories to filter by
+     */
     private void initChipGroup(PopupWindow popupWindow, View popupView, LinearLayout content, List<Category> categories) {
         ChipGroup chipGroup = popupView.findViewById(R.id.chipGroup);
         Button btnShowResults = popupView.findViewById(R.id.btnShowResults);
@@ -314,6 +320,9 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    /**
+     * save the current state of filtering
+     */
     private void saveFilteredCategories(Set<String> filteredCategoriesIds) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("prefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -321,11 +330,17 @@ public class HomeFragment extends Fragment {
         editor.apply();
     }
 
+    /**
+     * @return the current state of filtering
+     */
     private Set<String> getFilteredCategories() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("prefs", MODE_PRIVATE);
         return sharedPreferences.getStringSet("filteredCategoriesIds", new HashSet<>());
     }
 
+    /**
+     * shows the date picker window that allows the user to pick date range of expenses
+     */
     private void showDateRangePicker(TextView selectedDateRangeTextView, ExpenseAdapter expenseAdapter) {
         MaterialDatePicker.Builder<androidx.core.util.Pair<Long, Long>> builder = MaterialDatePicker.Builder.dateRangePicker();
         builder.setTitleText("Select dates");
@@ -415,6 +430,9 @@ public class HomeFragment extends Fragment {
         return formattedStartingDate + " - " + formattedEndingDate;
     }
 
+    /**
+     * shows the add / edit expense popup window
+     */
     private void showPopupWindow(@NonNull View anchorView, @NonNull ExpenseAdapter expenseAdapter,
                                  List<Category> categories, int position) {
         // Determine if we're adding or editing
@@ -484,6 +502,9 @@ public class HomeFragment extends Fragment {
         popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, yOffset);
     }
 
+    /**
+     * handle the data and events of the popup window
+     */
     @SuppressLint("SetTextI18n")
     private void handleExpensePopup(@NonNull View popupView, final PopupWindow popupWindow,
                                     List<Category> categories, @NonNull ExpenseAdapter expenseAdapter,
@@ -648,6 +669,9 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    /**
+     * handles the logic of the category popup menu selection
+     */
     private void handleCategoryPopupMenu(TextView categoryEditText, @NonNull final int[] selectedCategoryIndex,
                                          List<Category> categories, Category category) {
 

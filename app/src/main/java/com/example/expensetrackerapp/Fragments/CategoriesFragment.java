@@ -101,6 +101,9 @@ public class CategoriesFragment extends Fragment {
 
     }
 
+    /**
+     * shows the bottom sheet dialog that allow the user to select a category icon
+     */
     public void showIconSelectionBottomSheet(@NonNull ImageView categoryIconIV,
                                              @NonNull Category category,
                                              final int[] imgIndexArr) {
@@ -142,6 +145,9 @@ public class CategoriesFragment extends Fragment {
         bottomSheetDialog.show();
     }
 
+    /**
+     * shows the add / edit category popup window
+     */
     private void showPopupWindow(@NonNull View anchorView, @NonNull CategoryAdapter categoryAdapter,
                                  int position) {
         // Determine if we're adding or editing
@@ -209,6 +215,9 @@ public class CategoriesFragment extends Fragment {
         popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, yOffset);
     }
 
+    /**
+     * handle the data and views events of the popup window
+     */
     private void handleCategoryPopup(@NonNull CategoryAdapter categoryAdapter,
                                      Category currentCategory, int position, @NonNull View popupView,
                                      @NonNull PopupWindow popupWindow) {
@@ -347,14 +356,14 @@ public class CategoriesFragment extends Fragment {
                                     @Override
                                     public void onFailure(Exception e) {
                                         // Failed to edit category
+                                        String toastMsg;
                                         if (e instanceof CategoryAlreadyExistsException) {
-                                            String toastMsg = "The name for the category is already taken";
-                                            Toast.makeText(requireContext(), toastMsg, Toast.LENGTH_SHORT).show();
+                                            toastMsg = "The name for the category is already taken";
                                         } else {
                                             // Unexpected error while editing
-                                            String toastMsg = "Failed to edit category, try again later";
-                                            Toast.makeText(requireContext(), toastMsg, Toast.LENGTH_SHORT).show();
+                                            toastMsg = "Failed to edit category, try again later";
                                         }
+                                        Toast.makeText(requireContext(), toastMsg, Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     }
@@ -376,15 +385,15 @@ public class CategoriesFragment extends Fragment {
                                 @Override
                                 public void onFailure(Exception e) {
                                     // Failed to add category
+                                    String toastMsg;
                                     if (e instanceof CategoryAlreadyExistsException) {
-                                        String toastMsg = "The selected name already exist, choose a different name";
-                                        Toast.makeText(requireContext(), toastMsg, Toast.LENGTH_SHORT).show();
+                                        toastMsg = "The selected name already exist, choose a different name";
                                     }
                                     else {
                                         // Unexpected error
-                                        String toastMsg = " Failed to add category, try again later";
-                                        Toast.makeText(requireContext(), toastMsg, Toast.LENGTH_SHORT).show();
+                                        toastMsg = " Failed to add category, try again later";
                                     }
+                                    Toast.makeText(requireContext(), toastMsg, Toast.LENGTH_SHORT).show();
                                 }
                             });
                 }
@@ -392,6 +401,9 @@ public class CategoriesFragment extends Fragment {
         });
     }
 
+    /**
+     * dismiss the popup window with a nice fade out animation
+     */
     private static void dismissPopupWithAnimation(@NonNull View popupView, @NonNull PopupWindow popupWindow) {
         popupView.animate()
                 .scaleX(0.8f).scaleY(0.8f)  // Shrink

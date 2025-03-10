@@ -121,6 +121,15 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+
+    /**
+     * Attempts to sign in a user with the provided email and password.
+     * This method utilizes the FirebaseAuthManager to authenticate the user. Upon successful
+     * sign-in, it displays a welcome message using a Toast and navigates the user to the
+     * MainActivity. If the sign-in fails, it displays an error message in a Toast.
+     * @param email    The email address of the user attempting to sign in.
+     * @param password The password of the user attempting to sign in.
+     */
     private void signIn(String email, String password) {
         Intent intent = new Intent(this, MainActivity.class);
         FirebaseAuthManager.signIn(email, password, new FirebaseAuthManager.FirebaseAuthCallback() {
@@ -137,6 +146,13 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Signs up a new user with the provided email and password.
+     * This method initiates the sign-up process using Firebase Authentication.
+     * Upon successful authentication, it adds default categories to the user's FireStore document
+     * @param email    The email address of the user.
+     * @param password The password of the user.
+     */
     private void signUp(String email, String password) {
         Intent intent = new Intent(this, MainActivity.class);
         FirebaseAuthManager.signUp(email, password, new FirebaseAuthManager.FirebaseAuthCallback() {
@@ -167,6 +183,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Resets the UI elements to the login mode.
+     */
     private void resetToLoginMode() {
         confirmPasswordET.setVisibility(View.GONE);
         loginBtn.setText(getString(R.string.login));
@@ -174,6 +193,9 @@ public class LoginActivity extends AppCompatActivity {
         inRegisterMode = false;
     }
 
+    /**
+     * Loads the registration layout by modifying the UI elements to reflect a registration form.
+     */
     private void loadRegistrationLayout() {
         confirmPasswordET.setVisibility(View.VISIBLE);
         loginBtn.setText(getString(R.string.signup));

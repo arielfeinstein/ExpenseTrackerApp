@@ -51,6 +51,9 @@ public class PieChartFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
+    /**
+     * generates the PieData object from the fetched expenses
+     */
     private PieData generatePieData(List<Expense> expenses) {
         // group expenses by category
         Map<Category, List<Expense>> groupedExpenses = new HashMap<>();
@@ -113,6 +116,9 @@ public class PieChartFragment extends Fragment {
         return new PieData(dataSet);
     }
 
+    /**
+     * generate list of colors for the chart entries
+     */
     private List<Integer> generateColors(int count) {
         List<Integer> colors = new ArrayList<>();
         Random random = new Random();
@@ -155,11 +161,17 @@ public class PieChartFragment extends Fragment {
         return true;
     }
 
+    /**
+     * updates the expenses data
+     */
     public void updateData(List<Expense> expenses) {
         this.expenses = expenses;
         updateChart();
     }
 
+    /**
+     * updates the chart based on the updated expenses data
+     */
     private void updateChart() {
         if (pieChart != null) {
             if (!expenses.isEmpty()) {

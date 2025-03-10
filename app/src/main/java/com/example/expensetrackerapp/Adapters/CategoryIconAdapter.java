@@ -7,22 +7,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.expensetrackerapp.Helper;
 import com.example.expensetrackerapp.OnItemClickListener;
 import com.example.expensetrackerapp.R;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class CategoryIconAdapter extends RecyclerView.Adapter<CategoryIconAdapter.CategoryIconViewHolder> {
     private OnItemClickListener onItemClickListener;
-    private Context context;
-    private List<Integer> categoryIconIndexes;
+    private final Context context;
+    private final List<Integer> categoryIconIndexes;
 
     public CategoryIconAdapter(Context context) {
         this.context = context;

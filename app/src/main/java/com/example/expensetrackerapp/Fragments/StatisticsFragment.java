@@ -94,6 +94,9 @@ public class StatisticsFragment extends Fragment {
         btnYearly.setOnClickListener(v -> timePeriodButtonClicked(view, btnYearly, TimePeriod.YEARLY));
     }
 
+    /**
+     * handle the click that switch between time periods (weekly, monthly, yearly)
+     */
     private void timePeriodButtonClicked(View parentView, Button clickedButton, TimePeriod timePeriod) {
         unselectButtons(parentView);
         clickedButton.setBackgroundResource(R.drawable.button_selected);

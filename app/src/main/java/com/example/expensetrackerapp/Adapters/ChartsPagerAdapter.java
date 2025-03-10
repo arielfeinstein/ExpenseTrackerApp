@@ -33,6 +33,9 @@ public class ChartsPagerAdapter extends FragmentStateAdapter {
         return (position == 1) ? barChartFragment : pieChartFragment;
     }
 
+    /**
+     * ExpenseListAdapter is responsible for displaying a list of expenses in a RecyclerView.
+     */
     @SuppressLint("NotifyDataSetChanged")
     public void updateData(List<Expense> expenses, TimePeriod timePeriod) {
         this.expenses.clear();

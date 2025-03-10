@@ -53,6 +53,14 @@ public class BarChartFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
+    /**
+     * Generates the data for a bar chart based on a list of expenses.
+     * This method groups expenses based on the selected time period (weekly, monthly, or yearly)
+     * and prepares the data for visualization in a bar chart.
+     * @param expenses A list of Expense objects to be visualized in the bar chart.
+     * Each expense should have a transaction date and an amount.
+     * @return An object containing the data for the bar chart including bar entries and labels.
+     */
     private BarData generateBarData(List<Expense> expenses) {
         Map<String, Double> groupedExpenses = new LinkedHashMap<>();
         List<String> allKeys = new ArrayList<>();
@@ -128,12 +136,18 @@ public class BarChartFragment extends Fragment {
 
 
 
+    /**
+     * updates the expenses data
+     */
     public void updateData(List<Expense> expenses, TimePeriod timePeriod) {
         this.expenses = expenses;
         this.timePeriod = timePeriod;
         updateChart();
     }
 
+    /**
+     * updates the chart based on the updated expenses data
+     */
     private void updateChart() {
         if (barChart != null) {
             BarData data = generateBarData(expenses);
