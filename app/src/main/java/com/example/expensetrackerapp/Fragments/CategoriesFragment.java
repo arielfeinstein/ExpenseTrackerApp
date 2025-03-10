@@ -32,7 +32,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.expensetrackerapp.Adapters.CategoryAdapter;
 import com.example.expensetrackerapp.Exceptions.CategoryAlreadyExistsException;
 import com.example.expensetrackerapp.Adapters.CategoryIconAdapter;
-import com.example.expensetrackerapp.Exceptions.ExpenseWithCategoryExistsException;
 import com.example.expensetrackerapp.Helper;
 import com.example.expensetrackerapp.Managers.FirebaseAuthManager;
 import com.example.expensetrackerapp.Managers.FirestoreManager;
@@ -249,29 +248,29 @@ public class CategoriesFragment extends Fragment {
             imgIndexArr[0] = currentCategory.getImgIndexInsideArraysXml();
 
             // Listener for remove button
-            removeBtn.setOnClickListener(btn -> FirestoreManager.removeCategory(userEmail, currentCategory.getId(), new FirestoreManager.FirestoreIdCallback() {
-                @Override
-                public void onComplete(String id) {
-                    // Successfully removed currentCategory from firestore
-                    categoryAdapter.removeCategory(position);
-                    dismissPopupWithAnimation(popupView, popupWindow);
-
+            removeBtn.setOnClickListener(btn -> {
+                if(categoryAdapter.getCount() == 1) {
+                    // Only one category remaining, can't remove it.
+                    Toast.makeText(requireContext(), "At least one category need to exist", Toast.LENGTH_SHORT).show();
                 }
+                else {
+                    FirestoreManager.removeCategory(userEmail, currentCategory.getId(), new FirestoreManager.FirestoreIdCallback() {
+                        @Override
+                        public void onComplete(String id) {
+                            // Successfully removed currentCategory from firestore
+                            categoryAdapter.removeCategory(position);
+                            dismissPopupWithAnimation(popupView, popupWindow);
+                        }
 
-                @Override
-                public void onFailure(Exception e) {
-                    if (e instanceof ExpenseWithCategoryExistsException) {
-                        // There are expenses that have this currentCategory
-                        String toastMsg = "Failed to remove, There are expenses that have this currentCategory";
-                        Toast.makeText(requireContext(), toastMsg, Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        // Other unexpected error
-                        String toastMsg = "Failed to remove currentCategory, try again later";
-                        Toast.makeText(requireContext(), toastMsg, Toast.LENGTH_SHORT).show();
-                    }
+                        @Override
+                        public void onFailure(Exception e) {
+                            // Other unexpected error
+                            String toastMsg = "Failed to remove currentCategory, try again later";
+                            Toast.makeText(requireContext(), toastMsg, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
-            }));
+            });
         }
         else {
             // Adding currentCategory
